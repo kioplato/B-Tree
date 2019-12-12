@@ -9,7 +9,7 @@
 #include "AM.h"
 #include "FD.h"
 
-int RD_Init(int file_desc, Record* record, void* fieldA, void* fieldB)
+int RD_Init(Record* record, void* fieldA, void* fieldB)
 {
 	if (record == NULL) return AME_ERROR;
 	if (fieldA == NULL) return AME_ERROR;
