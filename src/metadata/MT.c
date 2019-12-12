@@ -1,34 +1,16 @@
 /*******************************************************************************
- * File: MT.h
- * Purpose: API for interacting with the file's metadata file.
+ * File: MT.c
+ * Purpose: Implementation of API for interacting with the file's metadata file.
 *******************************************************************************/
 
-#ifndef MT_H
-#define MT_H
-
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
-#include "BF.h"
-#include "AM.h"
-
-#define CALL_MT(func_call)	\
-{							\
-	int code = func_call;	\
-	if (code != AME_OK)		\
-		AM_errno = code;	\
-		return code;		\
-}
+#include "../BF.h"
+#include "../accessmethod/AM.h"
 
 #define DESCCODE "BTREE"
 
-/*
- * Gives the formulation of a metadata block to the provided block.
- *
- * Returns AME_OK on success.
- * Returns AME_ERROR on failure.
- */
 int MT_Init(BF_Block* metablock, char attrType1, int attrLength1,
 		char attrType2, int attrLength2)
 {
@@ -58,13 +40,33 @@ int MT_Init(BF_Block* metablock, char attrType1, int attrLength1,
 	return AME_OK;
 }
 
-/*
- * Updates the metadata.
- * Currently only the index's root may change.
- *
- * Returns AME_OK on success.
- * Returns AME_ERROR on failure.
- */
+int MT_GetData(BF_Block* metablock, char* attrType1, int* attrLength1,
+		char* attrType2, int* attrLength2, size_t* root_index_block)
+{
+	char desccode[] = DESCCODE;  // The code that verifies the file is an index file.
+	char* metadata;  // The metadata block's data.
+	char* offseted_metadata;  // The offseted metadata for metadata's data traverse.
+
+	if (metablock == NULL) return AME_ERROR;
+
+	metadata = NULL;
+	metadata = BF_Block_GetData(metablock);
+	if (metadata == NULL) return AME_ERROR;
+
+	offseted_metadata = metadata + strlen(desccode);  // Skip the descriptor code.
+	memcpy((void*)attrType1, (const void*)offseted_metadata, sizeof(attrType1));
+	offseted_metadata += sizeof(attrType1);
+	memcpy((void*)attrLength1, (const void*)offseted_metadata, sizeof(attrLength1));
+	offseted_metadata += sizeof(attrLength1);
+	memcpy((void*)attrType2, (const void*)offseted_metadata, sizeof(attrType2));
+	offseted_metadata += sizeof(attrType2);
+	memcpy((void*)attrLength2, (const void*)offseted_metadata, sizeof(attrLength2));
+	offseted_metadata += sizeof(attrLength2);
+	memcpy((void*)root_index_block, (const void*)offseted_metadata, sizeof(root_index_block));
+
+	return AME_OK;
+}
+
 int MT_WriteData(BF_Block* metablock, size_t root_index_block)
 {
 	char desccode[] = DESCCODE;  // The code that verifies the file is an index file.
@@ -93,39 +95,3 @@ int MT_WriteData(BF_Block* metablock, size_t root_index_block)
 
 	return AME_OK;
 }
-
-/*
- * Gets the metadata block's data.
- * Writes the contents to the pointers.
- *
- * Returns AME_OK on success.
- * Returns AME_ERROR on failure.
- */
-int MT_GetData(BF_Block* metablock, char* attrType1, int* attrLength1,
-		char* attrType2, int* attrLength2, size_t* root_index_block)
-{
-	char desccode[] = DESCCODE;  // The code that verifies the file is an index file.
-	char* metadata;  // The metadata block's data.
-	char* offseted_metadata;  // The offseted metadata for metadata's data traverse.
-
-	if (metablock == NULL) return AME_ERROR;
-
-	metadata = NULL;
-	metadata = BF_Block_GetData(metablock);
-	if (metadata == NULL) return AME_ERROR;
-
-	offseted_metadata = metadata + strlen(desccode);  // Skip the descriptor code.
-	memcpy((void*)attrType1, (const void*)offseted_metadata, sizeof(attrType1));
-	offseted_metadata += sizeof(attrType1);
-	memcpy((void*)attrLength1, (const void*)offseted_metadata, sizeof(attrLength1));
-	offseted_metadata += sizeof(attrLength1);
-	memcpy((void*)attrType2, (const void*)offseted_metadata, sizeof(attrType2));
-	offseted_metadata += sizeof(attrType2);
-	memcpy((void*)attrLength2, (const void*)offseted_metadata, sizeof(attrLength2));
-	offseted_metadata += sizeof(attrLength2);
-	memcpy((void*)root_index_block, (const void*)offseted_metadata, sizeof(root_index_block));
-
-	return AME_OK;
-}
-
-#endif  // #ifndef MT_H
