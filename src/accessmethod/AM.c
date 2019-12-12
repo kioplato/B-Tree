@@ -90,12 +90,13 @@ int AM_DestroyIndex(char *fileName)
  * Returns the AM file descriptor on success.
  * Returns an AM Error code on failure.
  */
-int AM_OpenIndex(char *fileName) {
+int AM_OpenIndex(char *fileName)
+{
 	// The file descriptor as returned from the BF layer.
 	// Will be stored in the AM file descriptors array for accessing BF layer.
-	int BF_file_desc;
+	int file_desc_BF;
 	// The file descriptor as it's stored in AM layer.
-	int FD_file_desc;
+	int file_desc_FD;
 	// The metadata block. We read it's data in order to cache it.
 	BF_Block* metablock = NULL;
 	// The metablock's data. Temporary placeholders.
@@ -105,25 +106,25 @@ int AM_OpenIndex(char *fileName) {
 	
 	if (fileName == NULL) return AME_ERROR;
 
-	CALL_BF(BF_OpenFile(fileName, &BF_file_desc));
+	CALL_BF(BF_OpenFile(fileName, &file_desc_BF));
 
 	/* Get metadata block's stored data for caching. */
 	metablock = NULL;
 	BF_Block_Init(&metablock);
-	CALL_BF(BF_GetBlock(BF_file_desc, 0, metablock));
+	CALL_BF(BF_GetBlock(file_desc_BF, 0, metablock));
 
 	CALL_MT(MT_GetData(metablock, &attrType1, &attrLength1, &attrType2,
 				&attrLength2, &root_index_block));
 
 	/* Cache the metadata block's data. */
-	CALL_FD(FD_Insert(BF_file_desc, &FD_file_desc, fileName, attrType1,
+	CALL_FD(FD_Insert(file_desc_BF, &file_desc_FD, fileName, attrType1,
 				attrLength1, attrType2, attrLength2, root_index_block));
 
 	/* Close off the metadata block. */
 	CALL_BF(BF_UnpinBlock(metablock));
 	BF_Block_Destroy(&metablock);
 
-	return FD_file_desc;
+	return file_desc_FD;
 }
 
 int AM_CloseIndex(int fileDesc)

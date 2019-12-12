@@ -57,8 +57,7 @@ void FD_Init();
  * Returns AME_MAX_FILES if the maximum number of files reached.
  */
 int FD_Insert(int filedesc, int* index, char* filename, char attrType1,
-		int attrLength1, char attrType2, int attrLength2, size_t index_root,
-		size_t n_entries);
+		int attrLength1, char attrType2, int attrLength2, size_t index_root);
 
 /*
  * Deletes a file descriptor from AM layer.
