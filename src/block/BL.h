@@ -27,8 +27,7 @@
  * Returns AME_OK on success and sets block to new block.
  * Returns AME_ERROR on failure.
  */
-// TODO: return block id as well.
-int BL_CreateBlock(int file_desc, BF_Block** block);
+int BL_CreateBlock(int file_desc, int* block_id, BF_Block** block);
 
 int BL_LoadBlock(int file_desc, int block_id, BF_Block** block);
 
