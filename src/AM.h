@@ -52,7 +52,7 @@ typedef struct Record {
 	int lengthB;
 } Record;
 
-void AM_Init(void);
+int AM_Init(void);
 
 int AM_CreateIndex(
   char *fileName,   /* όνομα αρχείου */

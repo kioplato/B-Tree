@@ -11,7 +11,7 @@
 
 int AM_errno = AME_OK;
 
-void AM_Init() {
+int AM_Init() {
 	/* Initialize global array. */
 	FD_Init();
 
@@ -21,7 +21,7 @@ void AM_Init() {
 	/* Initialize BF layer. */
 	CALL_BF(BF_Init(LRU));
 
-	return;
+	return AME_OK;
 }
 
 /*
