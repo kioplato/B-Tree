@@ -13,7 +13,7 @@ int AM_errno = AME_OK;
 
 void AM_Init() {
 	/* Initialize global array. */
-	CALL_FD(FD_Init());
+	FD_Init();
 
 	/* Initialize scan array. */
 	// TODO.
