@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-#include "BF.h"
+#include "../BF.h"
 
 /* Error codes */
 extern int AM_errno;

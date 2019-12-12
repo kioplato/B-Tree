@@ -10,8 +10,8 @@
 #include <string.h>
 
 #include "../BF.h"
-#include "../AM.h"
-#include "../FD.h"
+#include "../accessmethod/AM.h"
+#include "../filedesc/FD.h"
 #include "../defn.h"
 
 #define DATACODE "DBL" // Code which means the block is data block.

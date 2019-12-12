@@ -11,7 +11,7 @@
 #include <string.h>
 
 #include "../BF.h"  // BF layer.
-#include "../AM.h"  // AM layer interface.
+#include "../accessmethod/AM.h"  // AM layer interface.
 
 #define AM_MAX_OPEN_FILES 20
 

@@ -1,13 +1,13 @@
 #include <stdio.h>
 
 #include "AM.h"  // The AM layer interface.
-#include "BF.h"  // The BF layer interface.
+#include "../BF.h"  // The BF layer interface.
 
-#include "MT.h"  // Metadata block API.
-#include "BL.h"  // General Block API.
-#include "FD.h"  // File descriptor array API.
-#include "datablock/DB.h"  // Data blocks API.
-#include "RD.h"  // Record API.
+#include "../metadata/MT.h"  // Metadata block API.
+#include "../block/BL.h"  // General Block API.
+#include "../filedesc/FD.h"  // File descriptor array API.
+#include "../datablock/DB.h"  // Data blocks API.
+#include "../record/RD.h"  // Record API.
 
 int AM_errno = AME_OK;
 
