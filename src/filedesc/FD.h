@@ -1,7 +1,6 @@
 /*******************************************************************************
  * File: FD.h
- * Purpose: API for interacting with the file descriptors array and each file's
- * cached data.
+ * Purpose: API for the file descriptors array and each file's cached data.
 *******************************************************************************/
 
 #ifndef FD_H
