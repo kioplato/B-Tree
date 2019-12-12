@@ -1,13 +1,11 @@
 /*******************************************************************************
  * File: RD.h
- * Purpose: API for interacting with records.
+ * Purpose: Implementation of API for interacting with records.
 *******************************************************************************/
 
-#ifndef RD_H
-#define RD_H
+#include <stdio.h>
 
-#include "AM.h"
-#include "FD.h"
+#include "../accessmethod/AM.h"
 
 int RD_Init(Record* record, void* fieldA, void* fieldB)
 {
@@ -20,5 +18,3 @@ int RD_Init(Record* record, void* fieldA, void* fieldB)
 
 	return AME_OK;
 }
-
-#endif  // #ifndef RD_H
