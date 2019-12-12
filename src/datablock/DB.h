@@ -124,7 +124,4 @@ int DB_Shift_Records_Right(int file_desc, BF_Block* block, size_t shift_base, in
  */
 int DB_Insert(int file_desc, BF_Block* block, Record record, int* flag);
 
-// TODO.
-int DB_Print_Record(int file_desc, BF_Block* block, size_t c_entry);
-
 #endif  // #ifndef DB_H
