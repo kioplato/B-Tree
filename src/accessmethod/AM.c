@@ -227,8 +227,45 @@ int AM_InsertEntry(int file_desc, void* fieldA, void* fieldB)
 	return AME_OK;
 }
 
-int AM_OpenIndexScan(int fileDesc, int op, void *value)
+int AM_OpenIndexScan(int indexDesc, int op, void *value)
 {
+	int index_root;
+	CALL_FD(FD_Get_IndexRoot(int indexDesc, size_t *index_root));
+	//αν ειχαμε συνεννοηθει σωστα, τωρα θα εχω στο index_root θα εχω είτε το root, δηλαδη το id ενος index block
+	//είτε το id ενος data block, δηλαδη του πρώτου και μοναδικου data block.
+
+	//check the type of block
+	BF_Block* root_block=NULL;
+	BF_Block_Init(&root_block);
+	if (root_block==NULL) return AME_ERROR;
+
+	CALL_FD(FD_Get_filedesc(indexDesc, &filedesc));
+
+
+	CALL_BF(BF_GetBlock( filedesc, index_root, root_block)
+	int flag;
+	CALL_DB(DB_Is_DataBlock(block, &flag));
+	if (flag==1)
+		int scan_index;
+		CALL_IS(IS_Insert(next=1, last_block=index_root, op, indexDesc, void* value, &scan_index))
+		return scan_index;
+	else //it was index block so we must go down the tree depending on the op
+		if (op==EQUAL) //για ισοτητα θελω τον αριστερο pointer ενος key για το οποιο value<key.
+			while (flag==0)
+				int i=0;
+				while (1)
+					int pointer, key
+					BT_Get_Pair(i, &pointer, &key)
+
+
+
+
+
+
+
+
+	IS_Insert(int next=1, int last_block, int op, int indexDesc, void* value, *scan_index)
+
 	return AME_OK;
 }
 
