@@ -37,7 +37,6 @@ int AM_CreateIndex(char *fileName, char attrType1, int attrLength1,
 	int file_desc;  // The file descriptor of the newly created file.
 	int metablock_id;  // The block id of metadata block.
 	BF_Block *metablock;  // The metadata block.
-	BF_Block *rootblock;  // The root of the index.
 
 	if (fileName == NULL)
 		return AME_ERROR;
