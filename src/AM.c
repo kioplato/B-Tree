@@ -37,7 +37,6 @@ int AM_CreateIndex(char *fileName, char attrType1, int attrLength1,
 	int file_desc;  // The file descriptor of the newly created file.
 	BF_Block *metablock;  // The metadata block.
 	BF_Block *rootblock;  // The root of the index.
-	size_t n_entries;  // The total number of entries a Data Block can store.
 
 	if (fileName == NULL)
 		return AME_ERROR;
@@ -48,7 +47,7 @@ int AM_CreateIndex(char *fileName, char attrType1, int attrLength1,
 
 	/* Create the metadata block. */
 	CALL_BL(BL_CreateBlock(file_desc, &metablock));
-	CALL_MT(MT_Init(attrType1, attrLength1, attrType2, attrLength2));
+	CALL_MT(MT_Init(metablock, attrType1, attrLength1, attrType2, attrLength2));
 
 	/* Close off metadata block. */
 	BF_Block_SetDirty(metablock);
