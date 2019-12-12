@@ -34,7 +34,6 @@
  * Returns AME_ERROR on failure.
  */
 int DB_Init(BF_Block* block, size_t next_block);
-// TODO: write next_block at init.
 
 /*
  * Check whether provided block is Data Block.

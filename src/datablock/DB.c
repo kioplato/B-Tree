@@ -58,11 +58,12 @@ int DB_Init(BF_Block* block, size_t next_block)
 {
 	char* data = NULL;  // The block's data.
 	char* offseted_data = NULL;  // The offseted data for data traversal.
-	size_t c_entries = 0;  // The block's current number of entries.
 	char datacode[] = DATACODE;
+	size_t c_entries = 0;  // The block's current number of entries.
 
 	if (block == NULL) return AME_ERROR;
 
+	data = NULL;
 	data = BF_Block_GetData(block);
 	if (data == NULL) return AME_ERROR;
 
