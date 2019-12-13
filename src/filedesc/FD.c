@@ -6,7 +6,7 @@
 
 #include <stdio.h>
 
-#include "../AM.h"
+#include "../accessmethod/AM.h"
 #include "FD.h"
 
 void FD_Init()
