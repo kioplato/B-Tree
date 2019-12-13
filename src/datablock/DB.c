@@ -100,8 +100,8 @@ int DB_Get_MaxEntries(int file_desc, size_t* n_entries)
 	char datacode[] = DATACODE;  // Used to calculate records per block.
 	size_t metadata_size;    // The metadata size of a Data Block.
 	size_t record_max_size;
-	size_t lenA;
-	size_t lenB;
+	int lenA;
+	int lenB;
 
 	if (n_entries == NULL) return AME_ERROR;
 
