@@ -210,7 +210,7 @@ int AM_InsertEntry(int file_desc, void* fieldA, void* fieldB)
 	if (fieldA == NULL) return AME_ERROR;
 	if (fieldB == NULL) return AME_ERROR;
 
-	CALL_FD(FD_Get_IndexRoot(fileDesc, &index_root));
+	CALL_FD(FD_Get_IndexRoot(file_desc, &index_root));
 
 	/* Formulate the record. Record struct with void values and lengths. */
 	Record record;
