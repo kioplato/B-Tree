@@ -21,7 +21,7 @@ char empDname[40];
 
 void insertEntries(int eNentry, int eAentry, int eSentry, int eDentry,
 		char* ename, int eage, float esal, char* edname, int recid) {
-	char errStr[40];
+	char errStr[128];
 
 	strcpy(errStr, "Error in AM_InsertEntry");
 
