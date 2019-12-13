@@ -9,7 +9,7 @@ libdir = lib
 
 CC = gcc
 CFLAGS = -Wall -Wextra -g -O2
-LDFLAGS = -g
+LDFLAGS = -g -L $(libdir) -Wl,-rpath,$(libdir) -lbf
 
 SRCS = $(shell find $(srcdir) -name "*.c")
 OBJS = $(SRCS:.c=.o)
