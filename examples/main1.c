@@ -12,7 +12,7 @@
 #include <string.h>
 
 #include "../src/defn.h"
-#include "../src/AM.h"
+#include "../src/accessmethod/AM.h"
 
 char empName[40];
 char empAge[40];
