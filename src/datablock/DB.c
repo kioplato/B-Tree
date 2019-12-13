@@ -261,8 +261,8 @@ int DB_Shift_Records_Right(int file_desc, BF_Block* block, size_t shift_base, in
 	size_t n_entries;  // The maximum number of entries the current block has.
 
 	size_t record_size;  // The maximum size of a record.
-	size_t lengthA;  // The length of the first field.
-	size_t lengthB;  // The length of the second field.
+	int lengthA;  // The length of the first field.
+	int lengthB;  // The length of the second field.
 
 	char* data;
 	char* offseted_data;
