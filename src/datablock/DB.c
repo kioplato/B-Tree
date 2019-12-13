@@ -123,8 +123,8 @@ int DB_Get_Record(int file_desc, BF_Block* block, Record* record, size_t c_entry
 	size_t n_entries;  // The maximum number of entries in a Data Block.
 	size_t c_entries;  // The current amount of entries in the Data Block.
 	size_t record_max_size;
-	size_t lenA;
-	size_t lenB;
+	int lenA;
+	int lenB;
 
 	char* data;  // The block's data.
 	char* offseted_data;  // Block's data for traversing contents.
