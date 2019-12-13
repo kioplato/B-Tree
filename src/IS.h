@@ -6,8 +6,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../include/bf.h"
-#include "../include/AM.h"
+
+#include "BF.h"
+#include "filedesc/FD.h"
+#include "accessmethod/AM.h"
 
 #define AM_MAX_SCAN_FILES 20
 
