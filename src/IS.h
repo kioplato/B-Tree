@@ -26,8 +26,6 @@
 
 
 /////////////////////////////////////////////
-struct scan_t scanIndexArray[AM_MAX_SCAN_FILES];
-
 
 #define AME_IS_MAX_FILES -15
 #define AME_IS_INVALID_INDEX -16
@@ -42,7 +40,7 @@ struct scan_t {
 	void* value;
 };
 
-
+struct scan_t scanIndexArray[AM_MAX_SCAN_FILES];
 
 void IS_Init()
 {
