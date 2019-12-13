@@ -22,8 +22,7 @@ void FD_Init()
  * Returns AME_MAX_FILES if the maximum number of files reached.
  */
 int FD_Insert(int filedesc, int* index, char* filename, char attrType1,
-		int attrLength1, char attrType2, int attrLength2, size_t index_root,
-		size_t n_entries)
+		int attrLength1, char attrType2, int attrLength2, size_t index_root)
 {
 	/* File available index. */
 	for (size_t i = 0; i < AM_MAX_OPEN_FILES; ++i) {
@@ -36,7 +35,6 @@ int FD_Insert(int filedesc, int* index, char* filename, char attrType1,
 			filedescs[i].cache.attrLength1 = attrLength1;
 			filedescs[i].cache.attrType2 = attrType2;
 			filedescs[i].cache.attrLength2 = attrLength2;
-			filedescs[i].cache.n_entries = n_entries;
 			*index = i;
 			return AME_OK;
 		}
