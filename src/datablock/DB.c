@@ -184,7 +184,6 @@ int DB_Write_Record(int file_desc, BF_Block* block, Record record, size_t c_entr
 	char* offseted_data; // Block's data for traversal.
 	
 	char datacode[] = DATACODE;  // The Data Block code for validity.
-	size_t metadata_size;        // The size of metadata in bytes.
 
 	char typeA;
 	char typeB;
