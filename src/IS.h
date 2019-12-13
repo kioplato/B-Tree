@@ -3,6 +3,9 @@
  * Purpose: API for interacting with the index scan array
 *******************************************************************************/
 
+#ifndef IS_H
+#define IS_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -144,4 +147,4 @@ int FD_Get_filedesc(int index, size_t *filedesc)
 	return AME_OK;
 }
 
-
+#endif  // #ifndef IS_H
