@@ -230,8 +230,8 @@ int AM_InsertEntry(int file_desc, void* fieldA, void* fieldB)
 
 int AM_OpenIndexScan(int indexDesc, int op, void *value)
 {
-	int index_root;
-	CALL_FD(FD_Get_IndexRoot(int indexDesc, size_t *index_root));
+	size_t index_root;
+	CALL_FD(FD_Get_IndexRoot(indexDesc, &index_root));
 	//αν ειχαμε συνεννοηθει σωστα, τωρα θα εχω στο index_root θα εχω είτε το root, δηλαδη το id ενος index block
 	//είτε το id ενος data block, δηλαδη του πρώτου και μοναδικου data block.
 
