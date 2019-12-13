@@ -8,8 +8,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "defn.h"
-#include "AM.h"
+#include "../src/defn.h"
+#include "../src/accessmethod/AM.h"
 
 int main()
 {
