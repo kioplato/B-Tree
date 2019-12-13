@@ -240,7 +240,7 @@ int AM_OpenIndexScan(int indexDesc, int op, void *value)
 	BF_Block_Init(&root_block);
 	if (root_block==NULL) return AME_ERROR;
 
-	CALL_FD(FD_Get_filedesc(indexDesc, &filedesc));
+	CALL_FD(FD_Get_FileDesc(indexDesc, &filedesc));
 
 
 	CALL_BF(BF_GetBlock( filedesc, index_root, root_block)
