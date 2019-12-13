@@ -214,7 +214,7 @@ int AM_InsertEntry(int file_desc, void* fieldA, void* fieldB)
 
 	/* Formulate the record. Record struct with void values and lengths. */
 	Record record;
-	if (RD_Init(file_desc, &record, fieldA, fieldB) != AME_OK) return AME_ERROR;
+	CALL_RD(RD_Init(&record, fieldA, fieldB));
 
 	BT_Subtree_Insert(file_desc, index_root, &overflow_root, record);
 
