@@ -17,14 +17,14 @@ OBJS = $(SRCS:.c=.o)
 .PHONY: all
 all: main1 main2 main3
 
-main1: $(OBJS)
-	$(CC) -L $(libdir) $(LDFLAGS) -o $(bindir)/$@ $(addprefix $(objdir)/, $(notdir $(OBJ)))
+main1: $(OBJS) examples/main1.o
+	$(CC) $(LDFLAGS) $(addprefix $(objdir)/, $(notdir $^)) -o $(bindir)/$@
 
-main2: $(OBJS)
-	$(CC) $(LDFLAGS) -o $(bindir)/$@ $(addprefix $(objdir)/, $(notdir $(OBJ)))
+main2: $(OBJS) examples/main2.o
+	$(CC) $(LDFLAGS) -o $(bindir)/$@ $(addprefix $(objdir)/, $(notdir $^))
 
-main3: $(OBJS)
-	$(CC) $(LDFLAGS) -o $(bindir)/$@ $(addprefix $(objdir)/, $(notdir $(OBJ)))
+main3: $(OBJS) examples/main3.o
+	$(CC) $(LDFLAGS) -o $(bindir)/$@ $(addprefix $(objdir)/, $(notdir $^))
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $(objdir)/$(notdir $@)
