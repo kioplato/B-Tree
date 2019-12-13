@@ -44,19 +44,12 @@ int FD_Insert(int filedesc, int* index, char* filename, char attrType1,
 
 int FD_Delete(int index)
 {
-	int flag;  // Flag about if there is an open index.
-
 	if (index >= AM_MAX_OPEN_FILES)
 		return AME_FD_INVALID_INDEX;
 	if (index < 0)
 		return AME_FD_INVALID_INDEX;
 	if (filedescs[index].filedesc == -1)
 		return AME_FD_INVALID_INDEX;
-
-	flag = -1;
-	// TODO.
-	//CALL_IS(IS_IsOpen(index, &flag));
-	if (flag == 1) return AME_FD_CLOSE_OPEN_SCAN;
 
 	filedescs[index].filedesc = -1;
 	free(filedescs[index].filename);
