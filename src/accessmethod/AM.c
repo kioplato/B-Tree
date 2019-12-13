@@ -228,6 +228,7 @@ int AM_InsertEntry(int file_desc, void* fieldA, void* fieldB)
 	return AME_OK;
 }
 
+/*
 int AM_OpenIndexScan(int indexDesc, int op, void *value)
 {
 	size_t index_root;
@@ -289,3 +290,4 @@ void AM_Close()
 {
 
 }
+*/
