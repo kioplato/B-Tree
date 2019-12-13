@@ -1,5 +1,5 @@
 /*******************************************************************************
- * File: DB.h
+ * File: DB.c
  * Purpose: API for interacting with Data Blocks.
 *******************************************************************************/
 
@@ -7,8 +7,8 @@
 #include <string.h>
 
 #include "../BF.h"
-#include "../AM.h"
-#include "../FD.h"
+#include "../accessmethod/AM.h"
+#include "../filedesc/FD.h"
 #include "../defn.h"
 #include "DB.h"
 
