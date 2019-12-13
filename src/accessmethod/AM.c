@@ -9,6 +9,18 @@
 #include "../datablock/DB.h"  // Data blocks API.
 #include "../record/RD.h"  // Record API.
 
+int convert(BF_ErrorCode code) {
+	if (code == BF_OK) return AME_OK;
+	if (code == BF_OPEN_FILES_LIMIT_ERROR) return AME_MAX_FILES;
+	if (code == BF_INVALID_FILE_ERROR) return AME_BF_INVALID_FD;
+	if (code == BF_ACTIVE_ERROR) return AME_BF_ACTIVE;
+	if (code == BF_FILE_ALREADY_EXISTS) return AME_FILE_EXISTS;
+	if (code == BF_FULL_MEMORY_ERROR) return AME_FULL_MEMORY;
+	if (code == BF_ERROR) return AME_BF_ERROR;
+	printf("Invalid BF_ErrorCode passed into convert.\n");
+	return AME_ERROR;
+}
+
 int AM_errno = AME_OK;
 
 int AM_Init() {
