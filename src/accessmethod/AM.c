@@ -182,7 +182,8 @@ int BT_Subtree_Insert(int file_desc, size_t subtree_root, size_t* overflow_root,
 	if (subtree_root == 0) {
 		CALL_BL(BL_CreateBlock(file_desc, (int*)overflow_root, &block));
 		CALL_DB(DB_Init(block, 0));  // Does not have next block.
-		CALL_DB(DB_Insert(block, record, &flag));
+		CALL_DB(DB_Insert(file_desc, block, record, &flag));
+		if (flag != 1) return AME_ERROR;
 		BF_Block_SetDirty(block);
 		CALL_BF(BF_UnpinBlock(block));
 		BF_Block_Destroy(&block);
