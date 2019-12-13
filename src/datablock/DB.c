@@ -177,8 +177,8 @@ int DB_Write_Record(int file_desc, BF_Block* block, Record record, size_t c_entr
 	size_t c_entries;  // The current number of entries in block.
 
 	size_t record_size;  // The maximum record size in bytes.
-	size_t lengthA;      // The length of the first field.
-	size_t lengthB;      // The length of the second field.
+	int lengthA;      // The length of the first field.
+	int lengthB;      // The length of the second field.
 
 	char* data;          // Block's data.
 	char* offseted_data; // Block's data for traversal.
