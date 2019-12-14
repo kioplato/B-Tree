@@ -6,7 +6,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "../BF.h"
+#include "../accessmethod/AM.h"
 
 int IB_Init(BF_Block* index_block, int pointer1, void* key, int pointer2){
     char* data = NULL;  // The index block's data.
