@@ -16,7 +16,7 @@ int IB_Init(BF_Block* index_block, int pointer1, void* key, int pointer2){
     data = BF_Block_GetData(index_block);
     if (data == NULL) return AME_ERROR;
 
-    if (key = NULL) return AME_ERROR;
+    if (key == NULL) return AME_ERROR;
     int num_of_pointers = 2;
     memcpy((void*)data, (const void*)&num_of_pointers, sizeof(int));
     data+=sizeof(int);
