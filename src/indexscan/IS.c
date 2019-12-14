@@ -123,6 +123,6 @@ int IS_IsOpen(int index_desc){
 		if (scanIndexArray[i].index_desc == index_desc){
 			return AME_IS_OPEN;
 		}
-	return AME_OK;
 	}
+	return AME_OK;
 }
