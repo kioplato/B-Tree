@@ -40,8 +40,7 @@ int IS_Insert(int next, int last_block, int op, int index_desc, void* value, int
 			scanIndexArray[scan_index].last_block=last_block;
 			scanIndexArray[scan_index].op=op;
 			scanIndexArray[scan_index].index_desc=index_desc;
-			scanIndexArray[scan_index].value= (void*)malloc(sizeof(value));
-			memcpy((void*)scanIndexArray[scan_index].value, (const void*)value, sizeof(value));
+			scanIndexArray[scan_index].value= value;
 			return AME_OK;
 	   }
 	return AME_IS_MAX_FILES;
