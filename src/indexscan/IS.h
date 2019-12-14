@@ -29,8 +29,15 @@
 
 #define AME_IS_MAX_FILES -15
 #define AME_IS_INVALID_INDEX -16
+#define AME_IS_OPEN -17
 
 ///////////////////////////////////////////////
+
+/*
+ * next: the record inside a data block to be examined.
+ * last_block: the latest block in which we search for records.
+ * index_desc: the index of the filedescs[] array.
+ */
 
 struct scan_t {
 	int next;
@@ -42,109 +49,98 @@ struct scan_t {
 
 struct scan_t scanIndexArray[AM_MAX_SCAN_FILES];
 
-void IS_Init()
-{
-	for (size_t i = 0; i < AM_MAX_SCAN_FILES; ++i){
-		scanIndexArray[i].index_desc = -1;
-	}
-}
-
-int IS_Insert(int next, int last_block, int op, int index_desc, void* value, *scan_index)
-{
-	/* File available index. */
-	for (size_t i = 0; i < AM_MAX_SCAN_FILES; ++i) {
-		if (scanIndexArray[i].index_desc == -1) {
-			scanIndexArray[i].next=next;
-			scanIndexArray[i].last_block=last_block;
-			scanIndexArray[i].op=op;
-			scanIndexArray[i].index_desc=index_desc;
-			scanIndexArray[i].value= (void*)malloc(sizeof(value));
-			memcpy((void*)scanIndexArray[i].value, (const void*)value, sizeof(value));
-			*scan_index = i;
-			return AME_OK;
-		}
-	}
-	return AME_IS_MAX_FILES;
-}
+/*
+ * Initializes the scanIndexArray[AM_MAX_SCAN_FILES].
+ */
+void IS_Init();
 
 
-int IS_Get_next(int index, size_t *next)
-{
-	if (scanIndexArray[index].index_desc == -1)
-		return AME_IS_INVALID_INDEX;
-	*next = scanIndexArray[index].next;
-	return AME_OK;
-}
-
-int IS_Get_last_block(int index, char *last_block)
-{
-	if (scanIndexArray[index].index_desc == -1)
-		return AME_IS_INVALID_INDEX;
-	*last_block = scanIndexArray[index].last_block;
-	return AME_OK;
-}
-
-int IS_Get_op(int index, char *op)
-{
-	if (scanIndexArray[index].index_desc == -1)
-		return AME_IS_INVALID_INDEX;
-	*op = scanIndexArray[index].op;
-	return AME_OK;
-}
+/*
+ * Checks if there is available index on scanIndexArray
+ * so the scan can be executed. It returns the first available index.
+ * Returns AME_OK if there is, AME_IS_MAX_FILES otherwise.
+ */
+int IS_OpenScan(int *scan_index);
 
 
-int IS_Get_index_desc(int index, int *index_desc)
-{
-	if (scanIndexArray[index].index_desc == -1)
-		return AME_IS_INVALID_INDEX;
-	*index_desc = scanIndexArray[index].index_desc;
-	return AME_OK;
-}
-
-int IS_Get_value(int index, void *value)
-{
-	if (scanIndexArray[index].index_desc == -1)
-		return AME_IS_INVALID_INDEX;
-	*value = *(scanIndexArray[index].value);
-	return AME_OK;
-}
+/*
+ * Inserts to scanIndexArray[scan_index] the data which AM_FindNextEntry will use.
+ * Returns AME_OK if the scan can be opened.
+ * Return AME_IS_MAX_FILES if the scanIndexArray[] is full.
+ */
+int IS_Insert(int next, int last_block, int op, int index_desc, void* value, int scan_index);
 
 
-
-int IS_Set_next(int index, size_t next)
-{
-	if (scanIndexArray[index].index_desc == -1)
-		return AME_IS_INVALID_INDEX;
-	scanIndexArray[index].next = next;
-	return AME_OK;
-}
-
-int IS_Set_last_block(int index, char last_block)
-{
-	if (scanIndexArray[index].index_desc == -1)
-		return AME_IS_INVALID_INDEX;
-	scanIndexArray[index].last_block = last_block;
-	return AME_OK;
-}
+/*
+* Gets the next field of struct of scanIndexArray[index].
+* Returns AME_IS_INVALID_INDEX if the scan doesnt exist.
+* Returns AME_OK if the scan exists.
+*/
+int IS_Get_next(int index, size_t *next);
 
 
-int IS_Close(int index){
-	if (scanIndexArray[index].index_desc == -1)
-		return AME_IS_INVALID_INDEX;
-	else{
-		scanIndexArray[index].index_desc = -1;
-		return AME_OK;
-	}
-}
+/*
+ * Gets the last_block field of struct of scanIndexArray[index].
+ * Returns AME_IS_INVALID_INDEX if the scan doesnt exist.
+ * Returns AME_OK if the scan exists.
+ */
+int IS_Get_last_block(int index, char *last_block);
 
-int IS_IsOpen(int index_desc){
-	int i;
-	for (i=0; i<AM_MAX_SCAN_FILES; i++){
-		if (scanIndexArray[i].index_desc == index_desc){
-			return AME_IS_OPEN;
-		}
-	return AME_OK;
-	}
-}
 
-#endif  // #ifndef IS_H
+/*
+ * Gets the op of the opened scan.
+ * Returns AME_IS_INVALID_INDEX if the scan doesnt exist.
+ * Returns AME_OK if the scan exists.
+ */
+int IS_Get_op(int index, char *op);
+
+
+/*
+ * Gets the index_desc field of struct of scanIndexArray[index]
+ * that is, the index of the filedescs[index_desc], of the opened file.
+ * Returns AME_IS_INVALID_INDEX if the scan doesnt exist.
+ * Returns AME_OK if the scan exists.
+ */
+int IS_Get_index_desc(int index, int *index_desc);
+
+
+/*
+ * Gets the value pointer of the opened scan.
+ * Returns AME_IS_INVALID_INDEX if the scan doesnt exist.
+ * Returns AME_OK if the scan exists.
+ */
+int IS_Get_value(int index, void *value);
+
+
+/*
+ * Sets the 'next' field of struct of scanIndexArray[index].
+ * Returns AME_IS_INVALID_INDEX if the scan doesnt exist.
+ * Returns AME_OK if the scan exists.
+ */
+int IS_Set_next(int index, size_t next);
+
+
+/*
+ * Sets the 'last_block' field of struct of scanIndexArray[index].
+ * Returns AME_IS_INVALID_INDEX if the scan doesnt exist.
+ * Returns AME_OK if the scan exists.
+ */
+int IS_Set_last_block(int index, char last_block);
+
+
+
+/*
+ * Closes the scan by initializing the value of 'index_desc' field.
+ * of struct of scanIndexArray[index].
+ * Returns AME_IS_INVALID_INDEX if the scan doesnt exist.
+ * Returns AME_OK if the scan exists.
+ */
+int IS_Close(int index);
+
+
+/*
+ * Checks if at least one scan of an opened file with index_desc is open.
+ * Returns AME_IS_OPEN if a scan is open.
+ * Returns AME_OK if no scan exists.
+ */
+int IS_IsOpen(int index_desc);
