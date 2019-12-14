@@ -6,6 +6,14 @@
 #ifndef RD_H
 #define RD_H
 
+#define CALL_BT(func_call)	\
+{							\
+	int code = func_call;	\
+	if (code != AME_OK)		\
+		AM_errno = code;	\
+		return code;		\
+}
+
 /*
  * Searches the correct data block to insert record to.
  * Returns
