@@ -9,6 +9,7 @@
 
 #include "../BF.h"
 #include "../accessmethod/AM.h"
+#include "../filedesc/FD.h"
 
 int IB_Init(BF_Block* index_block, int pointer1, void* key, int pointer2){
     char* data = NULL;  // The index block's data.
