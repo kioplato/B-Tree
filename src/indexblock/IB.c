@@ -43,7 +43,7 @@ int IB_GetPointer(BF_Block *index_block, void* key, int* pointer, int indexDesc)
     data+=sizeof(int);
     //temporaly hold the pointer
     memcpy((void*)pointer, (const void*)data, sizeof(int));
-    num_of_keys=num_of_pointers-1;
+    int num_of_keys=num_of_pointers-1;
     data+=sizeof(int); // Skip the first pointer, data points at first key
     char Type1 = filedescs[indexDesc].cache.attrType1;
     int Lenght1 = filedescs[indexDesc].cache.attrLength1;
@@ -58,7 +58,7 @@ int IB_GetPointer(BF_Block *index_block, void* key, int* pointer, int indexDesc)
     if (Type1=='i'){
         int key_i;
         memcpy((void*)&key_i, (const void*)data, sizeof(int));
-        if (*key<key_i){
+        if (*(int*)key<key_i){
           return AME_OK;
         }
         data+=sizeof(int); //data points to second pointer (P1)
@@ -66,7 +66,7 @@ int IB_GetPointer(BF_Block *index_block, void* key, int* pointer, int indexDesc)
         data+=sizeof(int); //data points to second key (K2)
         for (int k=2; k<=num_of_keys; k++){
           memcpy((void*)&key_i, (const void*)data, sizeof(int));
-          if (*key<key_i)
+          if (*(int*)key<key_i)
             return AME_OK;
           else{
             data+=sizeof(int); //data points to next pointer
@@ -79,9 +79,9 @@ int IB_GetPointer(BF_Block *index_block, void* key, int* pointer, int indexDesc)
     }
 
     if (Type1=='f'){
-        int key_f;
+        float key_f;
         memcpy((void*)&key_f, (const void*)data, sizeof(float));
-        if (*key<key_f){
+        if (*(float*)key<key_f){
           return AME_OK;
         }
         data+=sizeof(float); //data points to second pointer (P1)
@@ -89,7 +89,7 @@ int IB_GetPointer(BF_Block *index_block, void* key, int* pointer, int indexDesc)
         data+=sizeof(int); //data points to second key (K2)
         for (int k=2; k<=num_of_keys; k++){
           memcpy((void*)&key_f, (const void*)data, sizeof(float));
-          if (*key<key_f)
+          if (*(float*)key<key_f)
             return AME_OK;
           else{
             data+=sizeof(float); //data points to next pointer
@@ -103,9 +103,11 @@ int IB_GetPointer(BF_Block *index_block, void* key, int* pointer, int indexDesc)
 
 
     if (Type1=='c'){
-        int key_c;
+        char* key_c = NULL;
+        key_c = malloc(sizeof(char) * Lenght1);
         memcpy((void*)key_c, (const void*)data, sizeof(Lenght1));
-        if (strcmp(key, &key_c)<0){
+        if (strcmp(key, key_c)<0){
+          free(key_c);
           return AME_OK;
         }
         data+=sizeof(Lenght1); //data points to second pointer (P1)
@@ -113,18 +115,22 @@ int IB_GetPointer(BF_Block *index_block, void* key, int* pointer, int indexDesc)
         data+=sizeof(int); //data points to second key (K2)
         for (int k=2; k<=num_of_keys; k++){
           memcpy((void*)key_c, (const void*)data, sizeof(Lenght1));
-          if (strcmp(key, &key_c)<0)
+          if (strcmp(key, key_c)<0) {
+            free(key_c);
             return AME_OK;
+          }
           else{
             data+=sizeof(Lenght1); //data points to next pointer
             memcpy((void*)pointer, (const void*)data, sizeof(int));
-            if (k==num_of_keys)
+            if (k==num_of_keys) {
+              free(key_c);
               return AME_OK;
+            }
             data+=sizeof(int); //data points to next key
           }
         }
     }
 
-    return AME_ERROR
+    return AME_ERROR;
 
 }
