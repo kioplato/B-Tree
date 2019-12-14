@@ -28,7 +28,7 @@ int AM_Init() {
 	FD_Init();
 
 	/* Initialize scan array. */
-	// TODO.
+	IS_Init();
 
 	/* Initialize BF layer. */
 	CALL_BF(BF_Init(LRU));
@@ -115,7 +115,7 @@ int AM_OpenIndex(char *fileName)
 	char attrType1, attrType2;
 	int attrLength1, attrLength2;
 	size_t root_index_block;
-	
+
 	if (fileName == NULL) return AME_ERROR;
 
 	CALL_BF(BF_OpenFile(fileName, &file_desc_BF));
@@ -151,6 +151,9 @@ int AM_CloseIndex(int fileDesc)
 	// Get the index root from the cache.
 	CALL_FD(FD_Get_IndexRoot(fileDesc, &index_root));
 
+	//Check if this open of the file has any scans running
+	CALL_IS(IS_IsOpen(fileDesc));
+
 	// Try to delete the FD. If successful proceed.
 	CALL_FD(FD_Delete(fileDesc));
 
@@ -173,7 +176,7 @@ int AM_CloseIndex(int fileDesc)
 
 /*
  * Searches the correct data block to insert record to.
- * Returns 
+ * Returns
  * Calls DBL API to insert the record.
  *
  * Returns the block id of the block that inserted the record to.
@@ -204,12 +207,12 @@ int BT_Subtree_Insert(int file_desc, size_t subtree_root, size_t* overflow_root,
 
 	/* Subtree exists. Load it's root. */
 	CALL_BL(BL_LoadBlock(file_desc, subtree_root, &block));
-	
+
 	// If it's a data block call insert on it.
-	// If insert fails 
-	
+	// If insert fails
+
 	// Go to the next index block.
-	
+
 	// .. unpin on advance and reload on back tracking ..
 }
 
@@ -232,7 +235,7 @@ int AM_InsertEntry(int file_desc, void* fieldA, void* fieldB)
 
 	// if index root does not exist create data block and insert record.
 	// subtree_insert takes care of that.
-	
+
 	// Recursive iteration through the B+ tree up to data block.
 	// Call function to insert record to data block.
 	// Function returns the block id of the block that inserted the record.
@@ -240,9 +243,27 @@ int AM_InsertEntry(int file_desc, void* fieldA, void* fieldB)
 	return AME_OK;
 }
 
-/*
 int AM_OpenIndexScan(int indexDesc, int op, void *value)
 {
+	printf("indexDesc: %d.\n", indexDesc);
+	printf("op: %d.\n", op);
+	char key_type;
+	CALL_FD(FD_Get_attrType1(indexDesc, &key_type));
+	printf("Key: ");
+	if (key_type == 'i')
+		printf("%d.\n", *(int*)value);
+	else if (key_type == 'f')
+		printf("%f.\n", *(float*)value);
+	else if (key_type == 'c')
+		printf("%s.\n", (char*)value);
+
+	printf("The AM_OpenIndexScan() isn't yet implemented.\n");
+
+	exit(1);
+
+	return AME_OK;
+}
+/*
 	size_t index_root;
 	CALL_FD(FD_Get_IndexRoot(indexDesc, &index_root));
 	//αν ειχαμε συνεννοηθει σωστα, τωρα θα εχω στο index_root θα εχω είτε το root, δηλαδη το id ενος index block
@@ -282,24 +303,42 @@ int AM_OpenIndexScan(int indexDesc, int op, void *value)
 
 	return AME_OK;
 }
+*/
 
 void* AM_FindNextEntry(int scanDesc)
 {
+	printf("scanDesc: %d.\n", scanDesc);
+
+	printf("The AM_FindNextEntry() isn't yet implemented.\n");
 	
+	exit(1);
+
+	return NULL;
 }
 
 int AM_CloseIndexScan(int scanDesc)
 {
+	printf("scanDesc: %d.\n", scanDesc);
+
+	printf("The AM_CloseIndexScan() isn't yet implemented.\n");
+
+	exit(1);
+
 	return AME_OK;
 }
 
 void AM_PrintError(char *errString)
 {
+	printf("errString: %s.\n", errString);
 
+	printf("The AM_PrintError() isn't yet implemented.\n");
+
+	exit(1);
 }
 
 void AM_Close()
 {
+	printf("The AM_Close() isn't yet implemented.\n");
 
+	exit(1);
 }
-*/

@@ -45,7 +45,7 @@ struct scan_t scanIndexArray[AM_MAX_SCAN_FILES];
 void IS_Init()
 {
 	for (size_t i = 0; i < AM_MAX_SCAN_FILES; ++i){
-		scanIndexArray[i].index_desc=-1;
+		scanIndexArray[i].index_desc = -1;
 	}
 }
 
@@ -58,7 +58,7 @@ int IS_Insert(int next, int last_block, int op, int index_desc, void* value, *sc
 			scanIndexArray[i].last_block=last_block;
 			scanIndexArray[i].op=op;
 			scanIndexArray[i].index_desc=index_desc;
-			scanIndexArray[i].value= (void*)malloc(sizeof(value));     SKATAAAAAAAAAAAA
+			scanIndexArray[i].value= (void*)malloc(sizeof(value));
 			memcpy((void*)scanIndexArray[i].value, (const void*)value, sizeof(value));
 			*scan_index = i;
 			return AME_OK;
@@ -115,7 +115,7 @@ int IS_Set_next(int index, size_t next)
 {
 	if (scanIndexArray[index].index_desc == -1)
 		return AME_IS_INVALID_INDEX;
-	scanIndexArray[index].next = next; 
+	scanIndexArray[index].next = next;
 	return AME_OK;
 }
 
@@ -137,12 +137,14 @@ int IS_Close(int index){
 	}
 }
 
-int FD_Get_filedesc(int index, size_t *filedesc)
-{
-	if (filedescs[index].filedesc == -1)
-		return AME_FD_INVALID_INDEX;
-	*filedesc = filedescs[index].filedesc;
+int IS_IsOpen(int index_desc){
+	int i;
+	for (i=0; i<AM_MAX_SCAN_FILES; i++){
+		if (scanIndexArray[i].index_desc == index_desc){
+			return AME_IS_OPEN;
+		}
 	return AME_OK;
+	}
 }
 
 #endif  // #ifndef IS_H
