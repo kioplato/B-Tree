@@ -20,7 +20,7 @@ int BT_Subtree_Insert(int file_desc, size_t subtree_root, size_t* overflow_root,
 	 * Record insertion should always succeed.
 	 */
 	if (subtree_root == 0) {
-		CALL_BL(BL_CreateBlock(file_desc, &block, overflow_root));
+		CALL_BL(BL_CreateBlock(file_desc, (int*)overflow_root, &block));
 		CALL_DB(DB_Init(block));
 		CALL_DB(DB_Insert(block, record, &flag));
 		BF_Block_SetDirty(block);
