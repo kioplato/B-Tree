@@ -3,8 +3,8 @@
  * Purpose: API for operating on B+-Tree.
 *******************************************************************************/
 
-#ifndef RD_H
-#define RD_H
+#ifndef BT_H
+#define BT_H
 
 #include <stdio.h>
 
