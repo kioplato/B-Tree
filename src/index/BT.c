@@ -1,3 +1,8 @@
+/*******************************************************************************
+ * File: BT.c
+ * Purpose: Implementation of API for operating with Data Blocks.
+*******************************************************************************/
+
 #include "BT.h"
 #include "../BF.h"
 #include "../BL.h"
