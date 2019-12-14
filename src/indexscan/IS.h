@@ -109,7 +109,7 @@ int IS_Get_index_desc(int index, int *index_desc);
  * Returns AME_IS_INVALID_INDEX if the scan doesnt exist.
  * Returns AME_OK if the scan exists.
  */
-int IS_Get_value(int index, void *value);
+int IS_Get_value(int index, void** value);
 
 
 /*

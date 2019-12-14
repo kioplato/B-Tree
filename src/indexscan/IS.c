@@ -80,11 +80,12 @@ int IS_Get_index_desc(int index, int *index_desc)
 	return AME_OK;
 }
 
-int IS_Get_value(int index, void *value)
+int IS_Get_value(int index, void** value)
 {
 	if (scanIndexArray[index].index_desc == -1)
 		return AME_IS_INVALID_INDEX;
-	*value = *(scanIndexArray[index].value);
+
+	*value = scanIndexArray[index].value;
 	return AME_OK;
 }
 
