@@ -22,16 +22,9 @@ extern int AM_errno;
 #define AME_EOF -12       /* There are not any more records that match. */
 #define AME_FD_INVALID_INDEX -13  /* Accessing empty index in FD array. */
 #define AME_DELETE_OPEN_FILE -14  /* Deleting an open file. */
-#define AME_FD_CLOSE_OPEN_SCAN -15  /* Closing a file with an open scan. */
+#define AME_FILE_CLOSE_OPEN_SCAN -15  /* Closing a file with an open scan. */
 #define AME_IS_MAX_FILES -16
 #define AME_IS_INVALID_INDEX -17
-#define AME_IS_OPEN -18
-/*
- * TODO: AME_FD_CLOSE_OPEN_SCAN maybe is the same as AME_IS_OPEN.
- * Change the IS_IsOpen() to return true if the provided FD is open, otherwise
- * return false. Use AME_FD_CLOSE_OPEN_SCAN in AM_CloseIndex() if the FD has a
- * scan open.
- */
 
 // Convert BF error codes to AME error codes.
 int convert(BF_ErrorCode code);

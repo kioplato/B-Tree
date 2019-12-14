@@ -143,4 +143,6 @@ int IS_Close(int index);
  * Returns AME_IS_OPEN if a scan is open.
  * Returns AME_OK if no scan exists.
  */
-int IS_IsOpen(int index_desc);
+int IS_IsOpen(int index_desc, int* flag);
+
+#endif  // #ifndef IS_H

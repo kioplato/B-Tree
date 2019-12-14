@@ -146,6 +146,7 @@ int AM_CloseIndex(int fileDesc)
 	int BF_index;  // The BF layer file descriptor.
 	size_t index_root;   // The index's root.
 	BF_Block* metablock; // The metadata block for writing new index root.
+	int flag;  // Flag about if the file has open scans.
 
 	// Get BF layer file descriptor.
 	CALL_FD(FD_Get_FileDesc(fileDesc, &BF_index));
@@ -153,8 +154,9 @@ int AM_CloseIndex(int fileDesc)
 	// Get the index root from the cache.
 	CALL_FD(FD_Get_IndexRoot(fileDesc, &index_root));
 
-	//Check if this open of the file has any scans running
-	CALL_IS(IS_IsOpen(fileDesc));
+	// Check if this file open has any open scans.
+	CALL_IS(IS_IsOpen(fileDesc, &flag));
+	if (flag == 1) return AME_FILE_CLOSE_OPEN_SCAN;
 
 	// Try to delete the FD. If successful proceed.
 	CALL_FD(FD_Delete(fileDesc));

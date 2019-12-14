@@ -117,12 +117,17 @@ int IS_Close(int index){
 	}
 }
 
-int IS_IsOpen(int index_desc){
-	int i;
-	for (i=0; i<AM_MAX_SCAN_FILES; i++){
-		if (scanIndexArray[i].index_desc == index_desc){
-			return AME_IS_OPEN;
+int IS_IsOpen(int index_desc, int* flag)
+{
+	if (flag == NULL) return AME_ERROR;
+
+	for (size_t i = 0; i < AM_MAX_SCAN_FILES; ++i){
+		if (scanIndexArray[i].index_desc == index_desc) {
+			*flag = 1;
+			return AME_OK;
 		}
 	}
+	*flag = 0;
+
 	return AME_OK;
 }
