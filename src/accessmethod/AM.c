@@ -8,6 +8,8 @@
 #include "../filedesc/FD.h"  // File descriptor array API.
 #include "../datablock/DB.h"  // Data blocks API.
 #include "../record/RD.h"  // Record API.
+#include "../indexscan/IS.h"
+#include "../index/BT.h"
 
 int convert(BF_ErrorCode code) {
 	if (code == BF_OK) return AME_OK;
