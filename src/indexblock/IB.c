@@ -25,4 +25,6 @@ int IB_Init(BF_Block* index_block, int pointer1, void* key, int pointer2){
     memcpy((void*)data, (const void*)key, sizeof(*key));
     data+=sizeof(*key);
     memcpy((void*)data, (const void*)&pointer2, sizeof(int));
-  }
+
+	return AME_OK;
+}
