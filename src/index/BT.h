@@ -6,6 +6,10 @@
 #ifndef RD_H
 #define RD_H
 
+#include <stdio.h>
+
+#include "../accessmethod/AM.h"
+
 #define CALL_BT(func_call)	\
 {							\
 	int code = func_call;	\
