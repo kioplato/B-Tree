@@ -1,3 +1,7 @@
+/*******************************************************************************
+ * File: IB.c
+ * Purpose: Implementation of API for interacting with Index Blocks.
+*******************************************************************************/
 
 #include <stdio.h>
 #include <stdlib.h>
