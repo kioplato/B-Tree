@@ -5,8 +5,8 @@
 
 #include "BT.h"
 #include "../BF.h"
-#include "../BL.h"
-#include "../DB.h"
+#include "../block/BL.h"
+#include "../datablock/DB.h"
 
 int BT_Subtree_Insert(int file_desc, size_t subtree_root, size_t* overflow_root, Record record)
 {
