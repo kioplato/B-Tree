@@ -1,3 +1,6 @@
+#ifndef RD_H
+#define RD_H
+
 /*
  * Searches the correct data block to insert record to.
  * Returns
@@ -8,3 +11,5 @@
  * index or the data block split.
  */
 int BT_Subtree_Insert(int file_desc, size_t subtree_root, size_t* overflow_root, Record record);
+
+#endif // #ifndef RD_H
