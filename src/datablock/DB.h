@@ -102,9 +102,10 @@ int DB_Get_Record(int file_desc, BF_Block* block, Record* record, size_t c_entry
 
 /*
  * Write the provided record in Data Block at c_entry-th position.
+ * Can only write the record at c_entry <= c_entries (overwrite or one new).
  * If c_entry >= n_entries then flag = -1.
- * If c_entry >= c_entries then flag = 0.
- * If c_entry < c_entries then flag = 1.
+ * If c_entry > c_entries then flag = 0.
+ * If c_entry <= c_entries then flag = 1.
  *
  * Returns AME_OK on success.
  * Returns AME_ERROR on failure.

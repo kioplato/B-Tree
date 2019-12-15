@@ -208,6 +208,8 @@ int DB_Write_Record(int file_desc, BF_Block* block, Record record, size_t c_entr
 	size_t n_entries;  // The maximum number of entries a block can store.
 	size_t c_entries;  // The current number of entries in block.
 
+	int entries_flag;  // Status flag for updating block's c_entries.
+
 	size_t record_size;  // The maximum record size in bytes.
 	int lengthA;      // The length of the first field.
 	int lengthB;      // The length of the second field.
@@ -237,9 +239,19 @@ int DB_Write_Record(int file_desc, BF_Block* block, Record record, size_t c_entr
 
 	/* Get block's current entries. */
 	CALL_DB(DB_Get_Entries(block, &c_entries));
-	if (c_entry >= c_entries) {
+	if (c_entry > c_entries) {
 		*flag = 0;
 		return AME_OK;
+	}
+
+	/* If we don't overwrite an existing record increase block's entries. */
+	if (c_entry == c_entries) {
+		c_entries++;
+		CALL_DB(DB_Write_Entries(file_desc, block, c_entries, &entries_flag));
+		if (entries_flag != 1) {
+			printf("Failed to write entries in DB_Write_Record().\n");
+			return AME_ERROR;
+		}
 	}
 
 	/* Get the types of the fields. */
