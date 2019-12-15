@@ -118,7 +118,7 @@ int AM_OpenIndex(char *fileName)
 	// The file descriptor as it's stored in AM layer.
 	int file_desc_FD;
 	// The metadata block. We read it's data in order to cache it.
-	BF_Block* metablock = NULL;
+	BF_Block* metablock;
 	// The metablock's data. Temporary placeholders.
 	char attrType1, attrType2;
 	int attrLength1, attrLength2;
@@ -130,8 +130,11 @@ int AM_OpenIndex(char *fileName)
 
 	/* Get metadata block's stored data for caching. */
 	metablock = NULL;
-	BF_Block_Init(&metablock);
-	CALL_BF(BF_GetBlock(file_desc_BF, 0, metablock));
+	CALL_BL(BL_LoadBlock(file_desc_BF, 0, &metablock));
+	if (metablock == NULL) {
+		fprintf(stderr, "Metadata block failed to load in AM_OpenIndex().\n");
+		return AME_ERROR;
+	}
 
 	CALL_MT(MT_GetData(metablock, &attrType1, &attrLength1, &attrType2,
 				&attrLength2, &root_index_block));
