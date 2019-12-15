@@ -320,7 +320,10 @@ int DB_Insert(int file_desc, BF_Block* block, Record record, int* flag)
 {
 	size_t n_entries;  // Total entries a Data Block can store.
 	size_t c_entries;  // Current entries the data block has.
-	int status;        // The status of the record we get from block.
+	int get_status;    // The status of the record we get from block.
+	int shift_status;  // The status of the shift operation.
+	int write_status;  // The status of the write operation.
+	int cmp_flag;          // For comparing the two records.
 	Record c_record;   // Record for iterating block.
 
 	if (block == NULL) return AME_ERROR;
@@ -338,24 +341,41 @@ int DB_Insert(int file_desc, BF_Block* block, Record record, int* flag)
 
 	/* Find correct insert position to maintain sortness. */
 	for (size_t i = 0; i < c_entries; ++i) {
-
-		CALL_DB(DB_Get_Record(file_desc, block, &c_record, i, &status));
+		CALL_DB(DB_Get_Record(file_desc, block, &c_record, i, &get_status));
 
 		/* Check the status of the record. Status = 0 or -1 shouldn't happen. */
-		if (status == 1) {  // Record successfully fetched.
-			// TODO: Compare the records.
-			CALL_DB(DB_Shift_Records_Right(file_desc, block, i, &status));
-			if (status != 1) return AME_ERROR;  // status should be 1.
-			CALL_DB(DB_Write_Record(file_desc, block, c_record, i, &status));
-			if (status != 1) return AME_ERROR;  // Write should succeed.
-		} else
+		if (get_status == 1) {  // Record successfully fetched.
+			CALL_RD(RD_Record_cmp(file_desc, record, c_record, &cmp_flag));
+
+			if (cmp_flag == -1) {  // record < c_record.
+				CALL_DB(DB_Shift_Records_Right(file_desc, block, i, &shift_status));
+				if (shift_status != 1) {  // Shift should succeed.
+					printf("Failed record shift in DB_Insert().\n");
+					return AME_ERROR;
+				}
+
+				CALL_DB(DB_Write_Record(file_desc, block, c_record, i, &write_status));
+				if (write_status != 1) {  // Write should succeed.
+					printf("Failed record write in DB_Insert().\n");
+					return AME_ERROR;
+				}
+
+				*flag = 1;
+				return AME_OK;
+			}
+		} else {
+			printf("Failed get of record in DB_Insert().\n");
 			return AME_ERROR;
+		}
 	}
 	
 	/* Insert record here. */
 	/* Data Block isn't full because we checked it. */
-	CALL_DB(DB_Write_Record(file_desc, block, record, c_entries, &status));
-	if (status != 1) return AME_ERROR;
+	CALL_DB(DB_Write_Record(file_desc, block, record, c_entries, &write_status));
+	if (write_status != 1) {
+		printf("Failed edge case record write in DB_Insert().\n");
+		return AME_ERROR;
+	}
 
 	return AME_OK;
 }
