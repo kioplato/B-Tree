@@ -20,9 +20,7 @@
 
 typedef struct Record {
 	void* fieldA;
-	int lengthA;
 	void* fieldB;
-	int lengthB;
 } Record;
 
 /*

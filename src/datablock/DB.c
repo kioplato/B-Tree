@@ -124,8 +124,8 @@ int DB_Get_Record(int file_desc, BF_Block* block, Record* record, size_t c_entry
 	size_t n_entries;  // The maximum number of entries in a Data Block.
 	size_t c_entries;  // The current amount of entries in the Data Block.
 	size_t record_max_size;
-	int lenA;
-	int lenB;
+	int lenA;  // Length of the first field.
+	int lenB;  // Length of the second field.
 
 	char* data;  // The block's data.
 	char* offseted_data;  // Block's data for traversing contents.
@@ -163,9 +163,9 @@ int DB_Get_Record(int file_desc, BF_Block* block, Record* record, size_t c_entry
 
 	offseted_data += record_max_size * c_entry;
 	
-	memcpy((void*)record->fieldA, (const void*)offseted_data, record->lengthA);
-	offseted_data += record->lengthA;
-	memcpy((void*)record->fieldB, (const void*)offseted_data, record->lengthB);
+	memcpy((void*)record->fieldA, (const void*)offseted_data, lenA);
+	offseted_data += lenA;
+	memcpy((void*)record->fieldB, (const void*)offseted_data, lenB);
 
 	*flag = 1;
 
