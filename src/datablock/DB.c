@@ -320,6 +320,8 @@ int DB_Shift_Records_Right(int file_desc, BF_Block* block, size_t shift_base, in
 
 	size_t move_bytes;
 
+	int entries_flag;
+
 	if (block == NULL) return AME_ERROR;
 	if (flag == NULL) return AME_ERROR;
 
@@ -359,6 +361,13 @@ int DB_Shift_Records_Right(int file_desc, BF_Block* block, size_t shift_base, in
 	 * Probably the Get_Record would have been cleaner.
 	 */
 	memmove((void*)(offseted_data + record_size), (void*)offseted_data, move_bytes);
+
+	c_entries++;
+	CALL_DB(DB_Write_Entries(file_desc, block, c_entries, &entries_flag));
+	if (entries_flag != 1) {
+		printf("Failed to write entries in DB_Shift_Records_Right().\n");
+		return AME_ERROR;
+	}
 
 	*flag = 1;
 
