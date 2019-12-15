@@ -20,9 +20,10 @@
 #define CALL_DB(func_call)	\
 {							\
 	int code = func_call;	\
-	if (code != AME_OK)		\
+	if (code != AME_OK) {	\
 		AM_errno = code;	\
 		return code;		\
+	}						\
 }
 
 /*

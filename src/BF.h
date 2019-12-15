@@ -28,9 +28,10 @@ typedef enum ReplacementAlgorithm {
 #define CALL_BF(call)				\
 {									\
 	BF_ErrorCode code = call;		\
-	if (code != BF_OK)				\
+	if (code != BF_OK) {			\
 		AM_errno = convert(code);	\
 		return AM_errno;			\
+	}								\
 }
 
 // Δομή Block

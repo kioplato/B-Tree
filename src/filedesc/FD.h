@@ -18,9 +18,10 @@
 #define CALL_FD(func_call)	\
 {							\
 	int code = func_call;	\
-	if (code != AME_OK)		\
+	if (code != AME_OK) {	\
 		AM_errno = code;	\
 		return code;		\
+	}						\
 }
 
 // The cache of an opened file.
