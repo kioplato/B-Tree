@@ -352,7 +352,7 @@ int DB_Shift_Records_Right(int file_desc, BF_Block* block, size_t shift_base, in
 	offseted_data += sizeof(size_t);  // Skip next_block.
 	offseted_data += shift_base * record_size;
 
-	move_bytes = (shift_base - c_entries) * record_size;
+	move_bytes = (c_entries - shift_base) * record_size;
 
 	/*
 	 * Could have implemented this with a reverse iteration of the records.
