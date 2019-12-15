@@ -388,7 +388,7 @@ int DB_Insert(int file_desc, BF_Block* block, Record record, int* flag)
 
 		/* Check the status of the record. Status = 0 or -1 shouldn't happen. */
 		if (get_status == 1) {  // Record successfully fetched.
-			CALL_RD(RD_Record_cmp(file_desc, record, c_record, &cmp_flag));
+			CALL_RD(RD_Key_cmp(file_desc, record.fieldA, c_record.fieldB, &cmp_flag));
 
 			if (cmp_flag == -1) {  // record < c_record.
 				CALL_DB(DB_Shift_Records_Right(file_desc, block, i, &shift_status));
