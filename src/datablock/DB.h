@@ -67,6 +67,17 @@ int DB_Get_NextBlock(BF_Block* block, size_t* next_block);
 int DB_Get_Entries(BF_Block* block, size_t* c_entries);
 
 /*
+ * Updates the number of entries of block.
+ * Overwrites the c_entries over the number of entries of the block.
+ * If c_entries > n_entries then flag = 0.
+ * If c_entries <= n_entries then flag = 1.
+ *
+ * Returns AME_OK on success.
+ * Returns AME_ERROR on failure.
+ */
+int DB_Write_Entries(int file_desc, BF_Block* block, size_t c_entries, int* flag);
+
+/*
  * Get the maximum entries a Data Block can store.
  * Writes the maximum entries to n_entries.
  * Checks whether provided block is Data Block.

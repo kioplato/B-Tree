@@ -96,6 +96,37 @@ int DB_Get_Entries(BF_Block* block, size_t* c_entries)
 	return AME_OK;
 }
 
+int DB_Write_Entries(int file_desc, BF_Block* block, size_t c_entries, int* flag)
+{
+	char* data;           // The block's data.
+	char* offseted_data;  // For iterating over block's data.
+
+	size_t n_entries;  // The number of maximum entries in a data block.
+
+	if (block == NULL) return AME_ERROR;
+	if (flag == NULL) return AME_ERROR;
+
+	/* If we are trying to write c_entries bigger than maximum entries. */
+	CALL_DB(DB_Get_MaxEntries(file_desc, &n_entries));
+	if (c_entries > n_entries) {
+		*flag = 0;
+		return AME_OK;
+	}
+
+	data = NULL;
+	data = BF_Block_GetData(block);
+	if (data == NULL) return AME_ERROR;
+
+	offseted_data = data;
+	offseted_data += strlen(DATACODE);  // Skip data code.
+
+	memcpy((void*)offseted_data, (const void*)&c_entries, sizeof(c_entries));
+
+	*flag = 1;
+
+	return AME_OK;
+}
+
 int DB_Get_MaxEntries(int file_desc, size_t* n_entries)
 {
 	char datacode[] = DATACODE;  // Used to calculate records per block.
