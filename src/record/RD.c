@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 
+#include "RD.h"
 #include "../accessmethod/AM.h"
 
 int RD_Init(Record* record, void* fieldA, void* fieldB)

@@ -18,6 +18,13 @@
 		return code;		\
 }
 
+typedef struct Record {
+	void* fieldA;
+	int lengthA;
+	void* fieldB;
+	int lengthB;
+} Record;
+
 /*
  * Initialize a record with the provided fields.
  *

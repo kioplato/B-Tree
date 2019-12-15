@@ -37,13 +37,6 @@ int convert(BF_ErrorCode code);
 #define LESS_THAN_OR_EQUAL 5
 #define GREATER_THAN_OR_EQUAL 6
 
-typedef struct Record {
-	void* fieldA;
-	int lengthA;
-	void* fieldB;
-	int lengthB;
-} Record;
-
 int AM_Init(void);
 
 int AM_CreateIndex(

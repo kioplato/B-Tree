@@ -11,6 +11,7 @@
 #include "../filedesc/FD.h"
 #include "../defn.h"
 #include "DB.h"
+#include "../record/RD.h"
 
 int DB_Init(BF_Block* block, size_t next_block)
 {

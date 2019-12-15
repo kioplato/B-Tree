@@ -4,9 +4,11 @@
 *******************************************************************************/
 
 #include "BT.h"
+#include "../accessmethod/AM.h"
 #include "../BF.h"
 #include "../block/BL.h"
 #include "../datablock/DB.h"
+#include "../record/RD.h"
 
 int BT_Subtree_Insert(int file_desc, size_t subtree_root, size_t* overflow_root, Record record)
 {
@@ -28,7 +30,7 @@ int BT_Subtree_Insert(int file_desc, size_t subtree_root, size_t* overflow_root,
 		BF_Block_Destroy(&block);
 		return AME_OK;
 	}
-  /* Subtree exists. Load it's root. */
+    /* Subtree exists. Load it's root. */
 	CALL_BL(BL_LoadBlock(file_desc, subtree_root, &block));
 
 	// If it's a data block call insert on it.

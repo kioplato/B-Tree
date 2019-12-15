@@ -8,7 +8,7 @@
 
 #include <stdio.h>
 
-#include "../accessmethod/AM.h"
+#include "../record/RD.h"
 
 #define CALL_BT(func_call)	\
 {							\

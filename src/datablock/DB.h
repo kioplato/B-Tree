@@ -13,6 +13,7 @@
 #include "../accessmethod/AM.h"
 #include "../filedesc/FD.h"
 #include "../defn.h"
+#include "../record/RD.h"
 
 #define DATACODE "DBL" // Code which means the block is data block.
 
