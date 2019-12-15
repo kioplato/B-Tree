@@ -310,9 +310,8 @@ void AM_PrintError(char *errString)
 	exit(1);
 }
 
+// NOTE: Probably is incomplete.
 void AM_Close()
 {
-	printf("The AM_Close() isn't yet implemented.\n");
-
-	exit(1);
+	BF_Close();
 }
