@@ -72,6 +72,8 @@ int AM_CreateIndex(char *fileName, char attrType1, int attrLength1,
 	CALL_BF(BF_UnpinBlock(metablock));
 	BF_Block_Destroy(&metablock);
 
+	CALL_BF(BF_CloseFile(file_desc_BF));
+
 	return AME_OK;
 }
 
