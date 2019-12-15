@@ -54,15 +54,15 @@ int MT_GetData(BF_Block* metablock, char* attrType1, int* attrLength1,
 	if (metadata == NULL) return AME_ERROR;
 
 	offseted_metadata = metadata + strlen(desccode);  // Skip the descriptor code.
-	memcpy((void*)attrType1, (const void*)offseted_metadata, sizeof(attrType1));
-	offseted_metadata += sizeof(attrType1);
-	memcpy((void*)attrLength1, (const void*)offseted_metadata, sizeof(attrLength1));
-	offseted_metadata += sizeof(attrLength1);
-	memcpy((void*)attrType2, (const void*)offseted_metadata, sizeof(attrType2));
-	offseted_metadata += sizeof(attrType2);
-	memcpy((void*)attrLength2, (const void*)offseted_metadata, sizeof(attrLength2));
-	offseted_metadata += sizeof(attrLength2);
-	memcpy((void*)root_index_block, (const void*)offseted_metadata, sizeof(root_index_block));
+	memcpy((void*)attrType1, (const void*)offseted_metadata, sizeof(char));
+	offseted_metadata += sizeof(char);
+	memcpy((void*)attrLength1, (const void*)offseted_metadata, sizeof(int));
+	offseted_metadata += sizeof(int);
+	memcpy((void*)attrType2, (const void*)offseted_metadata, sizeof(char));
+	offseted_metadata += sizeof(char);
+	memcpy((void*)attrLength2, (const void*)offseted_metadata, sizeof(int));
+	offseted_metadata += sizeof(int);
+	memcpy((void*)root_index_block, (const void*)offseted_metadata, sizeof(size_t));
 
 	return AME_OK;
 }
