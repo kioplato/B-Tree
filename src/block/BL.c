@@ -21,6 +21,7 @@ int BL_CreateBlock(int file_desc_BF, int* block_id, BF_Block** block)
 	CALL_BF(BF_AllocateBlock(file_desc_BF, *block));
 
 	CALL_BF(BF_GetBlockCounter(file_desc_BF, block_id));
+	(*block_id)--;
 
 	return AME_OK;
 }
