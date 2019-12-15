@@ -17,6 +17,8 @@ OBJS = $(SRCS:.c=.o)
 .PHONY: all
 all: main1 main2 main3
 
+tests: db
+
 main1: $(OBJS) examples/main1.o
 	$(CC) $(LDFLAGS) $(addprefix $(objdir)/, $(notdir $^)) -o $(bindir)/$@
 
@@ -24,6 +26,9 @@ main2: $(OBJS) examples/main2.o
 	$(CC) $(LDFLAGS) -o $(bindir)/$@ $(addprefix $(objdir)/, $(notdir $^))
 
 main3: $(OBJS) examples/main3.o
+	$(CC) $(LDFLAGS) -o $(bindir)/$@ $(addprefix $(objdir)/, $(notdir $^))
+
+db: $(OBJS) tests/main_test_DB.o
 	$(CC) $(LDFLAGS) -o $(bindir)/$@ $(addprefix $(objdir)/, $(notdir $^))
 
 %.o: %.c
