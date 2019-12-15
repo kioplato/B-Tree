@@ -90,7 +90,7 @@ int DB_Get_MaxEntries(int file_desc, size_t* n_entries);
 
 /*
  * Get the c_entry-th record from provided Data Block.
- * Writes the record to record.
+ * Writes the record to record. Record's members should have memory allocated.
  * If c_entry >= n_entries then flag = -1.
  * If c_entry >= c_entries then flag = 0.
  * If c_entry < c_entries then flag = 1.

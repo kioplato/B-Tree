@@ -369,10 +369,16 @@ int DB_Insert(int file_desc, BF_Block* block, Record record, int* flag)
 {
 	size_t n_entries;  // Total entries a Data Block can store.
 	size_t c_entries;  // Current entries the data block has.
+
+	int lengthA;  // The length of the first field.
+	int lengthB;  // The length of the second field.
+
 	int get_status;    // The status of the record we get from block.
 	int shift_status;  // The status of the shift operation.
 	int write_status;  // The status of the write operation.
+
 	int cmp_flag;          // For comparing the two records.
+
 	Record c_record;   // Record for iterating block.
 
 	if (block == NULL) return AME_ERROR;
@@ -388,6 +394,13 @@ int DB_Insert(int file_desc, BF_Block* block, Record record, int* flag)
 		return AME_OK;
 	}
 
+	/* Allocate memory for c_record members. */
+	CALL_FD(FD_Get_attrLength1(file_desc, &lengthA));
+	CALL_FD(FD_Get_attrLength2(file_desc, &lengthB));
+
+	c_record.fieldA = malloc(lengthA);
+	c_record.fieldB = malloc(lengthB);
+
 	/* Find correct insert position to maintain sortness. */
 	for (size_t i = 0; i < c_entries; ++i) {
 		CALL_DB(DB_Get_Record(file_desc, block, &c_record, i, &get_status));
@@ -400,23 +413,35 @@ int DB_Insert(int file_desc, BF_Block* block, Record record, int* flag)
 				CALL_DB(DB_Shift_Records_Right(file_desc, block, i, &shift_status));
 				if (shift_status != 1) {  // Shift should succeed.
 					printf("Failed record shift in DB_Insert().\n");
+					free(c_record.fieldA);
+					free(c_record.fieldB);
 					return AME_ERROR;
 				}
 
 				CALL_DB(DB_Write_Record(file_desc, block, c_record, i, &write_status));
 				if (write_status != 1) {  // Write should succeed.
 					printf("Failed record write in DB_Insert().\n");
+					free(c_record.fieldA);
+					free(c_record.fieldB);
 					return AME_ERROR;
 				}
 
 				*flag = 1;
+
+				free(c_record.fieldA);
+				free(c_record.fieldB);
 				return AME_OK;
 			}
 		} else {
 			printf("Failed get of record in DB_Insert().\n");
+			free(c_record.fieldA);
+			free(c_record.fieldB);
 			return AME_ERROR;
 		}
 	}
+
+	free(c_record.fieldA);
+	free(c_record.fieldB);
 	
 	/* Insert record here. */
 	/* Data Block isn't full because we checked it. */
