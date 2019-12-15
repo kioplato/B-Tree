@@ -48,7 +48,7 @@ int AM_Init() {
 int AM_CreateIndex(char *fileName, char attrType1, int attrLength1,
 	               char attrType2, int attrLength2)
 {
-	int file_desc;  // The file descriptor of the newly created file.
+	int file_desc_BF;  // The file descriptor of the newly created file.
 	int metablock_id;  // The block id of metadata block.
 	BF_Block *metablock;  // The metadata block.
 
@@ -57,10 +57,14 @@ int AM_CreateIndex(char *fileName, char attrType1, int attrLength1,
 
 	/* Create and open the file. */
 	CALL_BF(BF_CreateFile(fileName));
-	CALL_BF(BF_OpenFile(fileName, &file_desc));
+	CALL_BF(BF_OpenFile(fileName, &file_desc_BF));
 
 	/* Create the metadata block. */
-	CALL_BL(BL_CreateBlock(file_desc, &metablock_id, &metablock));
+	CALL_BL(BL_CreateBlock(file_desc_BF, &metablock_id, &metablock));
+	if (metablock == NULL) {
+		fprintf(stderr, "Failed to create metadata block in AM_CreateIndex().\n");
+		return AME_ERROR;
+	}
 	CALL_MT(MT_Init(metablock, attrType1, attrLength1, attrType2, attrLength2));
 
 	/* Close off metadata block. */
