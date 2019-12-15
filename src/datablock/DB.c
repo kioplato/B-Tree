@@ -460,5 +460,7 @@ int DB_Insert(int file_desc, BF_Block* block, Record record, int* flag)
 		return AME_ERROR;
 	}
 
+	*flag = 1;
+
 	return AME_OK;
 }
