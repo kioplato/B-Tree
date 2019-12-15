@@ -280,6 +280,9 @@ int DB_Write_Record(int file_desc, BF_Block* block, Record record, size_t c_entr
 	}
 	else if (typeA == STRING) {
 		write_bytes = strlen((char*)record.fieldA) + 1; // + 1 for NULL byte.
+	} else {
+		fprintf(stderr, "Invalid type of first field in DB_Write_Record().\n");
+		return AME_ERROR;
 	}
 	memcpy((void*)offseted_data, (const void*)record.fieldA, write_bytes);
 
@@ -291,6 +294,9 @@ int DB_Write_Record(int file_desc, BF_Block* block, Record record, size_t c_entr
 	}
 	else if (typeB == STRING) {
 		write_bytes = strlen((char*)record.fieldB) + 1; // + 1 for NULL byte.
+	} else {
+		fprintf(stderr, "Invalid type of second field in DB_Write_Record().\n");
+		return AME_ERROR;
 	}
 	memcpy((void*)offseted_data, (const void*)record.fieldB, write_bytes);
 
