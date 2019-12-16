@@ -25,6 +25,7 @@ extern int AM_errno;
 #define AME_FILE_CLOSE_OPEN_SCAN -15  /* Closing a file with an open scan. */
 #define AME_IS_MAX_FILES -16
 #define AME_IS_INVALID_INDEX -17
+#define AME_INVALID_LENGTH -18
 
 // Convert BF error codes to AME error codes.
 int convert(BF_ErrorCode code);

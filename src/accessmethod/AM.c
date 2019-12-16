@@ -55,6 +55,16 @@ int AM_CreateIndex(char *fileName, char attrType1, int attrLength1,
 	if (fileName == NULL)
 		return AME_ERROR;
 
+	if ((attrType1 == INTEGER && attrLength1 != sizeof(int)) ||
+			(attrType1 == FLOAT && attrLength1 != sizeof(float)) ||
+			(attrType2 == INTEGER && attrLength2 != sizeof(int)) ||
+			(attrType2 == FLOAT && attrLength2 != sizeof(float)))
+		return AME_INVALID_LENGTH;
+
+	if ((attrType1 == STRING && (attrLength1 > 255 || attrLength1 < 1)) ||
+			(attrType2 == STRING && (attrLength2 > 255 || attrLength2 < 1)))
+		return AME_INVALID_LENGTH;
+
 	/* Create and open the file. */
 	CALL_BF(BF_CreateFile(fileName));
 	CALL_BF(BF_OpenFile(fileName, &file_desc_BF));
