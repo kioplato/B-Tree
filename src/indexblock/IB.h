@@ -3,6 +3,15 @@
 #include <string.h>
 #include "../BF.h"
 
+#define CALL_IB(func_call)	\
+{							\
+	int code = func_call;	\
+	if (code != AME_OK) {	\
+		AM_errno = code;	\
+		return code;		\
+	}						\
+}
+
 /*
  * Given the first key to insert in the index block and the two pointers,
  * it initializes the index block by inserting
