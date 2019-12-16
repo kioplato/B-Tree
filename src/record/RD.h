@@ -43,4 +43,17 @@ int RD_Init(Record* record, void* fieldA, void* fieldB);
  */
 int RD_Key_cmp(int file_desc, void* field1, void* field2, int* flag);
 
+/*
+ * Split the records array in the most optimal way.
+ * Takes care of multiple identical key values.
+ * Must be at least one value different than the others.
+ *
+ * n_records: the number of records in records array.
+ * splitter: where the right block starts.
+ *
+ * Returns AME_OK on success.
+ * Returns AME_ERROR on failure.
+ */
+int RD_Split_Records(int file_desc_AM, Record records[], size_t n_records, size_t* splitter);
+
 #endif  // #ifndef RD_H
