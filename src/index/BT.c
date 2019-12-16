@@ -9,6 +9,43 @@
 #include "../block/BL.h"
 #include "../datablock/DB.h"
 #include "../record/RD.h"
+#include "../indexblock/IB.h"
+
+int BT_Get_SubtreeRoot(int file_desc_AM, BF_Block* block, void* key, int* pointer)
+{
+	size_t c_pointers;  // The current number of pointers in block.
+
+	int key_length;  // The length of key in bytes.
+	void* current_key;  // For getting the block's keys.
+	size_t key_index;  // For iterating the index block's keys.
+
+	int get_key_status;
+	int get_pointer_status;
+	int cmp_status;
+
+	if (block == NULL) return AME_ERROR;
+	if (key == NULL) return AME_ERROR;
+	if (pointer == NULL) return AME_ERROR;
+
+	CALL_FD(FD_Get_attrLength1(file_desc_AM, &key_length));
+	current_key = malloc(key_length);
+
+	CALL_IB(IB_Get_CountPointers(block, &c_pointers));
+
+	for (key_index = 0; key_index < c_pointers - 1; ++key_index) {
+		CALL_IB(IB_Get_Key(file_desc_AM, block, current_key, key_index, &get_key_status));
+		CALL_RD(RD_Key_cmp(file_desc_AM, key, current_key, &cmp_status));
+		if (cmp_status == -1) {
+			key_index--;
+			break;
+		}
+	}
+	CALL_IB(IB_Get_Pointer(file_desc_AM, block, pointer, key_index + 1, &get_pointer_status));
+
+	free(current_key);
+
+	return AME_OK;
+}
 
 int BT_Subtree_Insert(int file_desc, size_t subtree_root, size_t* overflow_root, Record record)
 {

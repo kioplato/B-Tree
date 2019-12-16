@@ -20,6 +20,15 @@
 }
 
 /*
+ * Get the pointer that the key should live at.
+ * The returned block id could be a data block or index block.
+ *
+ * Returns AME_OK on success.
+ * Returns AME_ERROR on failure.
+ */
+int BT_Get_SubtreeRoot(int file_desc_AM, BF_Block* block, void* key, int* pointer);
+
+/*
  * Searches the correct data block to insert record to.
  * Returns
  * Calls DBL API to insert the record.
@@ -30,4 +39,4 @@
  */
 int BT_Subtree_Insert(int file_desc, size_t subtree_root, size_t* overflow_root, Record record);
 
-#endif // #ifndef RD_H
+#endif  // #ifndef BT_H
