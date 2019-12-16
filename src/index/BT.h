@@ -30,13 +30,13 @@ int BT_Get_SubtreeRoot(int file_desc_AM, BF_Block* block, void* key, int* pointe
 
 /*
  * Searches the correct data block to insert record to.
- * Returns
- * Calls DBL API to insert the record.
+ * If the data block splits then index blocks insert/split at backtrack.
  *
- * Returns the block id of the block that inserted the record to.
- * If returned value is different from the one provided it means that the
- * index or the data block split.
+ * If splitted == 0 when function completes execution it means that the provided
+ * subtree root splitted. Most likely you would want to create a new index root
+ * and insert the pointer-key-pointer.
  */
-int BT_Subtree_Insert(int file_desc, size_t subtree_root, size_t* overflow_root, Record record);
+int BT_Subtree_Insert(int file_desc_AM, int subtree_root, Record record,
+		int* pointer1, void** key, int* pointer2, int* splitted);
 
 #endif  // #ifndef BT_H
