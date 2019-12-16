@@ -10,26 +10,50 @@
 #include "../BF.h"
 #include "../accessmethod/AM.h"
 #include "../filedesc/FD.h"
+#include "../defn.h"
 
-int IB_Init(BF_Block* index_block, int pointer1, void* key, int pointer2){
-    char* data = NULL;  // The index block's data.
-    if (index_block == NULL) return AME_ERROR;
-    data = BF_Block_GetData(index_block);
-    if (data == NULL) return AME_ERROR;
+int IB_Init(int file_desc_AM, BF_Block* block, int pointer1, void* key, int pointer2)
+{
+	char* data = NULL;  // The index block's data.
+	char* offseted_data = NULL;  // The block's data for iterating block.
 
-    if (key == NULL) return AME_ERROR;
-    int num_of_pointers = 2;
-    memcpy((void*)data, (const void*)&num_of_pointers, sizeof(int));
-    data+=sizeof(int);
-    memcpy((void*)data, (const void*)&pointer1, sizeof(int));
-    data+=sizeof(int);
-    memcpy((void*)data, (const void*)key, sizeof(*key));
-    data+=sizeof(*key);
-    memcpy((void*)data, (const void*)&pointer2, sizeof(int));
+    size_t num_of_pointers = 2;  // The number of pointers.
+
+	char key_type;  // The variable type of key.
+	int key_length; // The length of key in bytes.
+	size_t write_bytes;  // The bytes to write.
+
+	if (block == NULL) return AME_ERROR;
+	if (key == NULL) return AME_ERROR;
+
+	data = NULL;
+	data = BF_Block_GetData(block);
+	if (data == NULL) return AME_ERROR;
+
+	CALL_FD(FD_Get_attrType1(file_desc_AM, &key_type));
+	CALL_FD(FD_Get_attrLength1(file_desc_AM, &key_length));
+
+	if (key_type == INTEGER || key_type == FLOAT) {
+		write_bytes = key_length;
+	}
+	else if (key_type == STRING) {
+		write_bytes = strlen((char*)key) + 1;
+	} else {
+		fprintf(stderr, "Invalid type of key in IB_Init().\n");
+		return AME_ERROR;
+	}
+
+	offseted_data = data;
+	memcpy((void*)offseted_data, (const void*)&num_of_pointers, sizeof(size_t));
+	offseted_data += sizeof(size_t);
+	memcpy((void*)offseted_data, (const void*)&pointer1, sizeof(int));
+	offseted_data += sizeof(int);
+	memcpy((void*)offseted_data, (const void*)key, write_bytes);
+	offseted_data += key_length;
+	memcpy((void*)offseted_data, (const void*)&pointer2, sizeof(int));
 
 	return AME_OK;
 }
-
 
 int IB_GetPointer(BF_Block *index_block, void* key, int* pointer, int indexDesc){
     char* data = NULL;
