@@ -169,8 +169,10 @@ int FD_Set_IndexRoot(int index, size_t index_root)
 	filename = filedescs[index].filename;
 
 	for (size_t i = 0; i < AM_MAX_OPEN_FILES; ++i) {
-		if (strcmp(filename, filedescs[i].filename) == 0)
-			filedescs[i].cache.index_root = index_root;
+		if (filedescs[i].filedesc != -1) {
+			if (strcmp(filename, filedescs[i].filename) == 0)
+				filedescs[i].cache.index_root = index_root;
+		}
 	}
 
 	return AME_OK;
