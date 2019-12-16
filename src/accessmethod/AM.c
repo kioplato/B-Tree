@@ -9,6 +9,7 @@
 #include "../datablock/DB.h"  // Data blocks API.
 #include "../record/RD.h"  // Record API.
 #include "../indexscan/IS.h"
+#include "../indexblock/IB.h"
 #include "../index/BT.h"
 
 int convert(BF_ErrorCode code) {
@@ -200,29 +201,81 @@ int AM_CloseIndex(int fileDesc)
 
 
 
-int AM_InsertEntry(int file_desc, void* fieldA, void* fieldB)
+int AM_InsertEntry(int file_desc_AM, void* fieldA, void* fieldB)
 {
-	size_t index_root;  // The index of the root.
-	// NOTE: does overflow_root contain the new root or the new index block?
-	size_t overflow_root;  // If the index root splits, this is the new root (?).
+	size_t index_root;  // The root of index.
+
+	int file_desc_BF;  // The BF file descriptor.
+
+	BF_Block* first_block;  // First data block to create if index is empty.
+	int first_block_id;     // First data block's id.
+	int insert_status;      // Insert status of the first record.
+
+	BF_Block* new_root;  // The new root if the root splits.
+	int new_root_id;     // The block id of the new root.
+
+	Record record;  // The record to insert.
 
 	if (fieldA == NULL) return AME_ERROR;
 	if (fieldB == NULL) return AME_ERROR;
 
-	CALL_FD(FD_Get_IndexRoot(file_desc, &index_root));
-
-	/* Formulate the record. Record struct with void values and lengths. */
-	Record record;
+	/*
+	 * This function makes the record's members point to the same memory as
+	 * fieldA and fieldB. The memory is copied into the data block and index
+	 * block. However, if in some way we changed the contents of fieldA or
+	 * fieldB before writing the record there would be a problem.
+	 */
 	CALL_RD(RD_Init(&record, fieldA, fieldB));
 
-	BT_Subtree_Insert(file_desc, index_root, &overflow_root, record);
+	CALL_FD(FD_Get_IndexRoot(file_desc_AM, &index_root));
 
-	// if index root does not exist create data block and insert record.
-	// subtree_insert takes care of that.
+	/*
+	 * This is the first insert.
+	 * Create the first data block and insert the record.
+	 * Set this new data block as index's root.
+	 */
+	if (index_root == 0) {
+		CALL_BL(FD_Get_FileDesc(file_desc_AM, &file_desc_BF));
+		CALL_BL(BL_CreateBlock(file_desc_BF, &first_block_id, &first_block));
+		CALL_DB(DB_Init(first_block, 0));
+		CALL_DB(DB_Insert(file_desc_AM, first_block, record, &insert_status));
+		if (insert_status != 1) return AME_ERROR;
+		CALL_FD(FD_Set_IndexRoot(file_desc_AM, first_block_id));
+		BF_Block_SetDirty(first_block);
+		CALL_BF(BF_UnpinBlock(first_block));
+		BF_Block_Destroy(&first_block);
+		return AME_OK;
+	}
 
-	// Recursive iteration through the B+ tree up to data block.
-	// Call function to insert record to data block.
-	// Function returns the block id of the block that inserted the record.
+	/* Variables used for the recursion. */
+	int pointer1;
+	void* key = NULL;
+	int pointer2;
+	int splitted;
+
+	/*
+	 * Insert the record in the index.
+	 * Key will point to valid memory when it reaches the data block.
+	 * That same memory will be used in each split to write the new key for the
+	 * upper layer to insert.
+	 */
+	BT_Subtree_Insert(file_desc_AM, index_root, record, &pointer1, &key,
+			&pointer2, &splitted);
+	/*
+	 * The record got inserted.
+	 * However, the root could have splitted.
+	 * We need to check splitted and create a new root if it's 1.
+	 * Update the root at FD cache.
+	 */
+
+	if (splitted == 1) {
+		CALL_BL(BL_CreateBlock(file_desc_BF, &new_root_id, &new_root));
+		CALL_IB(IB_Init(file_desc_AM, new_root, pointer1, key, pointer2));
+		BF_Block_SetDirty(new_root);
+		CALL_BF(BF_UnpinBlock(new_root));
+		BF_Block_Destroy(&new_root);
+		CALL_FD(FD_Set_IndexRoot(file_desc_AM, new_root_id));
+	}
 
 	return AME_OK;
 }
