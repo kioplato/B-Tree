@@ -64,6 +64,6 @@ int RD_Split_Records(int file_desc_AM, Record records[], size_t n_records, size_
  * Returns AME_OK on success.
  * Returns AME_ERROR on failure.
  */
-int RD_Print(int file_desc_AM, Record record)
+int RD_Print(int file_desc_AM, Record record);
 
 #endif  // #ifndef RD_H
