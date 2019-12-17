@@ -272,6 +272,7 @@ int AM_InsertEntry(int file_desc_AM, void* fieldA, void* fieldB)
 	if (splitted == 1) {
 		CALL_BL(BL_CreateBlock(file_desc_BF, &new_root_id, &new_root));
 		CALL_IB(IB_Init(file_desc_AM, new_root, pointer1, key, pointer2));
+		free(key);
 		BF_Block_SetDirty(new_root);
 		CALL_BF(BF_UnpinBlock(new_root));
 		BF_Block_Destroy(&new_root);
