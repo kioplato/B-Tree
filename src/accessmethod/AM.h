@@ -40,6 +40,9 @@ int convert(BF_ErrorCode code);
 
 int AM_Init(void);
 
+/*
+ * Provided length for strings should accomodate for the terminating NULL byte.
+ */
 int AM_CreateIndex(
   char *fileName,   /* όνομα αρχείου */
   char attrType1,   /* τύπος πρώτου πεδίου: 'c' (συμβολοσειρά), 'i' (ακέραιος), 'f' (πραγματικός) */
