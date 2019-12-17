@@ -56,4 +56,14 @@ int RD_Key_cmp(int file_desc, void* field1, void* field2, int* flag);
  */
 int RD_Split_Records(int file_desc_AM, Record records[], size_t n_records, size_t* splitter);
 
+/*
+ * Print the provided record.
+ * Requires the AM file descriptor for cache access because it needs to know
+ * what type the fields are in order to print them.
+ *
+ * Returns AME_OK on success.
+ * Returns AME_ERROR on failure.
+ */
+int RD_Print(int file_desc_AM, Record record)
+
 #endif  // #ifndef RD_H

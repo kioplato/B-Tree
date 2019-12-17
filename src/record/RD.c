@@ -8,6 +8,7 @@
 #include "RD.h"
 #include "../accessmethod/AM.h"
 #include "../filedesc/FD.h"
+#include "../defn.h"
 
 int RD_Init(Record* record, void* fieldA, void* fieldB)
 {
@@ -85,6 +86,34 @@ int RD_Split_Records(int file_desc_AM, Record records[], size_t n_records, size_
 
 	/* Compare the distances between left edge split and right edge split. */
 	if (*splitter < (n_records - 1) - c_splitter) *splitter = c_splitter + 1;
+
+	return AME_OK;
+}
+
+int RD_Print(int file_desc_AM, Record record)
+{
+	char fieldA_type;
+	char fieldB_type;
+
+	if (record.fieldA == NULL) return AME_ERROR;
+	if (record.fieldB == NULL) return AME_ERROR;
+
+	CALL_FD(FD_Get_attrType1(file_desc_AM, &fieldA_type));
+	CALL_FD(FD_Get_attrType2(file_desc_AM, &fieldB_type));
+
+	if (fieldA_type == INTEGER)
+		printf("fieldA: %d.\n", *(int*)record.fieldA);
+	else if (fieldA_type == FLOAT)
+		printf("fieldA: %f.\n", *(float*)record.fieldA);
+	else if (fieldA_type == STRING)
+		printf("fieldA: %s.\n", (char*)record.fieldA);
+
+	if (fieldB_type == INTEGER)
+		printf("fieldB: %d.\n", *(int*)record.fieldB);
+	else if (fieldB_type == FLOAT)
+		printf("fieldB: %f.\n", *(float*)record.fieldB);
+	else if (fieldB_type == STRING)
+		printf("fieldB: %s.\n", (char*)record.fieldB);
 
 	return AME_OK;
 }
