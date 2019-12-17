@@ -17,7 +17,7 @@ OBJS = $(SRCS:.c=.o)
 .PHONY: all
 all: main1 main2 main3
 
-tests: db RD_Split_Records ib
+tests: db RD_Split_Records ib insert
 
 main1: $(OBJS) examples/main1.o
 	$(CC) $(LDFLAGS) $(addprefix $(objdir)/, $(notdir $^)) -o $(bindir)/$@
@@ -35,6 +35,9 @@ RD_Split_Records: $(OBJS) tests/test_RD_Split_Records.o
 	$(CC) $(LDFLAGS) -o $(bindir)/$@ $(addprefix $(objdir)/, $(notdir $^))
 
 ib: $(OBJS) tests/test_indexblock.o
+	$(CC) $(LDFLAGS) -o $(bindir)/$@ $(addprefix $(objdir)/, $(notdir $^))
+
+insert: $(OBJS) tests/test_AM_insert1.o
 	$(CC) $(LDFLAGS) -o $(bindir)/$@ $(addprefix $(objdir)/, $(notdir $^))
 
 %.o: %.c
