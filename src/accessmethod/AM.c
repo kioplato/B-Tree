@@ -251,7 +251,7 @@ int AM_InsertEntry(int file_desc_AM, void* fieldA, void* fieldB)
 	int pointer1;
 	void* key = NULL;
 	int pointer2;
-	int splitted;
+	int splitted = 0;
 
 	/*
 	 * Insert the record in the index.
