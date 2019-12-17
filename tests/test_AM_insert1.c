@@ -8,6 +8,9 @@
 #include <stdlib.h>
 
 #include "../src/accessmethod/AM.h"
+#include "../src/block/BL.h"
+#include "../src/filedesc/FD.h"
+#include "../src/datablock/DB.h"
 #include "../src/defn.h"
 
 int main(void)
@@ -53,6 +56,19 @@ int main(void)
 		AM_InsertEntry(file_desc_AM, key_ptr, value_ptr);
 	}
 	printf(">>>>>>>>>>>>>>>>>>>\n");
+
+	printf(">>>>>>>>>>>>>>>>>>>\n");
+	printf("Getting the data block to print it.\n");
+	BF_Block* block;  // The only data block that exists with 10 records.
+	size_t datablock_id;  // The data block's id.
+
+	CALL_FD(FD_Get_IndexRoot(file_desc_AM, &datablock_id));
+	printf("Index root id: %ld.\n", datablock_id);
+	CALL_BL(BL_LoadBlock(file_desc_AM, datablock_id, &block));
+	printf("Printing the data block.\n");
+	CALL_DB(DB_Print(file_desc_AM, block));
+	CALL_BF(BF_UnpinBlock(block));
+	BF_Block_Destroy(&block);
 
 	printf(">>>>>>>>>>>>>>>>>>>\n");
 	printf("Closing file %s.\n", file_name);
