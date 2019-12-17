@@ -138,4 +138,12 @@ int DB_Shift_Records_Right(int file_desc, BF_Block* block, size_t shift_base, in
  */
 int DB_Insert(int file_desc, BF_Block* block, Record record, int* flag);
 
+/*
+ * Print the provided block.
+ *
+ * Returns AME_OK on success.
+ * Returns AME_ERROR on failure.
+ */
+int DB_Print(int file_desc_AM, BF_Block* block);
+
 #endif  // #ifndef DB_H

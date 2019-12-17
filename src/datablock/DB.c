@@ -464,3 +464,41 @@ int DB_Insert(int file_desc, BF_Block* block, Record record, int* flag)
 
 	return AME_OK;
 }
+
+int DB_Print(int file_desc_AM, BF_Block* block)
+{
+	int is_datablock;
+
+	size_t c_entries;  // The number of entries in block.
+
+	int key_length;  // Key's length is bytes.
+	int value_length;  // Values length in bytes.
+
+	int status;  // The status of get record.
+
+	Record record;  // Fetched record to print.
+
+	if (block == NULL) return AME_ERROR;
+
+	CALL_DB(DB_Is_DataBlock(block, &is_datablock));
+	if (is_datablock == 0) return AME_ERROR;
+
+	CALL_FD(FD_Get_attrLength1(file_desc_AM, &key_length));
+	CALL_FD(FD_Get_attrLength2(file_desc_AM, &value_length));
+
+	record.fieldA = malloc(key_length);
+	record.fieldB = malloc(value_length);
+
+	CALL_DB(DB_Get_Entries(block, &c_entries));
+
+	for (size_t c_entry = 0; c_entry < c_entries; ++c_entry) {
+		CALL_DB(DB_Get_Record(file_desc_AM, block, &record, c_entry, &status));
+		if (status != 1) return AME_ERROR;
+		CALL_RD(RD_Print(file_desc_AM, record));
+	}
+
+	free(record.fieldA);
+	free(record.fieldB);
+
+	return AME_OK;
+}
