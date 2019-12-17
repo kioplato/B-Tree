@@ -17,7 +17,9 @@ int BT_Get_SubtreeRoot(int file_desc_AM, BF_Block* block, void* key, int* pointe
 
 	int key_length;  // The length of key in bytes.
 	void* current_key;  // For getting the block's keys.
+
 	size_t key_index;  // For iterating the index block's keys.
+	size_t ptr_index;  // For iterating the index block's pointers.
 
 	int get_key_status;
 	int get_pointer_status;
@@ -32,15 +34,13 @@ int BT_Get_SubtreeRoot(int file_desc_AM, BF_Block* block, void* key, int* pointe
 
 	CALL_IB(IB_Get_CountPointers(block, &c_pointers));
 
-	for (key_index = 0; key_index < c_pointers - 1; ++key_index) {
+	for (key_index = 0, ptr_index = 0; key_index < c_pointers - 1; ++key_index/*, ++ptr_index*/) {
 		CALL_IB(IB_Get_Key(file_desc_AM, block, current_key, key_index, &get_key_status));
 		CALL_RD(RD_Key_cmp(file_desc_AM, key, current_key, &cmp_status));
-		if (cmp_status == -1) {
-			key_index--;
-			break;
-		}
+		if (cmp_status == -1) break;
+		ptr_index = key_index + 1;  // Point ptr_index to values >= current_key.
 	}
-	CALL_IB(IB_Get_Pointer(file_desc_AM, block, pointer, key_index + 1, &get_pointer_status));
+	CALL_IB(IB_Get_Pointer(file_desc_AM, block, pointer, ptr_index, &get_pointer_status));
 
 	free(current_key);
 
