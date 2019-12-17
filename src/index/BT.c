@@ -114,8 +114,10 @@ int BT_Subtree_Insert(int file_desc_AM, int subtree_root, Record record,
 					break;
 				}
 			}
-			records[c_entry].fieldA = record.fieldA;
-			records[c_entry].fieldB = record.fieldB;
+			records[c_entry].fieldA = malloc(fieldA_length);
+			records[c_entry].fieldB = malloc(fieldB_length);
+			memcpy((void*)records[c_entry].fieldA, (const void*)record.fieldA, fieldA_length);
+			memcpy((void*)records[c_entry].fieldB, (const void*)record.fieldB, fieldB_length);
 			/*
 			 * The c_entry is the index of the records in data block.
 			 * We write at records[c_entry + 1] because in one read from block
