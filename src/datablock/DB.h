@@ -50,12 +50,22 @@ int DB_Is_DataBlock(BF_Block* block, int* flag);
 /*
  * Get the next block id from the provided Data Block.
  * Writes the next block id to next_block.
+ * // TODO: Implementation does not check if it's a data block.
  * Checks whether provided block is indeed a Data Block.
  *
  * Returns AME_OK on success.
  * Returns AME_ERROR on failure.
  */
 int DB_Get_NextBlock(BF_Block* block, size_t* next_block);
+
+/*
+ * Set the next block id to the provided Data Block.
+ * Writes the next_block to Data Block.
+ *
+ * Returns AME_OK on success.
+ * Returns AME_ERROR on failure.
+ */
+int DB_Set_NextBlock(BF_Block* block, size_t next_block);
 
 /*
  * Get the current number of entries from the provided Data Block.

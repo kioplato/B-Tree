@@ -76,6 +76,26 @@ int DB_Get_NextBlock(BF_Block* block, size_t* next_block)
 	return AME_OK;
 }
 
+int DB_Set_NextBlock(BF_Block* block, size_t next_block)
+{
+	char* data;           // Block's data.
+	char* offseted_data;  // For traversing data.
+
+	if (block == NULL) return AME_ERROR;
+
+	data = NULL;
+	data = BF_Block_GetData(block);
+	if (data == NULL) return AME_ERROR;
+
+	offseted_data = data;
+	offseted_data += strlen(DATACODE);  // Skip the data block label/identifier.
+	offseted_data += sizeof(size_t);    // Skip the number of records.
+
+	memcpy((void*)offseted_data, (const void*)&next_block, sizeof(size_t));
+
+	return AME_OK;
+}
+
 int DB_Get_Entries(BF_Block* block, size_t* c_entries)
 {
 	char* data;           // Block's data.
