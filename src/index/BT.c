@@ -65,6 +65,7 @@ int BT_Subtree_Insert(int file_desc_AM, int subtree_root, Record record,
 	int fieldA_length;
 	int fieldB_length;
 	size_t n_entries;  // Maximum number of entries in a data block.
+	int next_block;
 	/********************************************************/
 
 	int next_subtree_root;  // The root of the next block when descending.
@@ -147,7 +148,9 @@ int BT_Subtree_Insert(int file_desc_AM, int subtree_root, Record record,
 
 			CALL_BL(BL_CreateBlock(file_desc_BF, &new_block_id, &new_block));
 
-			CALL_DB(DB_Init(new_block, 0));
+			CALL_DB(DB_Get_NextBlock(block, &next_block));
+			CALL_DB(DB_Init(new_block, next_block));
+			CALL_DB(DB_Set_NextBlock(block, new_block_id));
 
 			/* We zero out the number of records in existing data block. */
 			CALL_DB(DB_Write_Entries(file_desc_AM, block, 0, &entries_flag));
