@@ -147,6 +147,8 @@ int BT_Subtree_Insert(int file_desc_AM, int subtree_root, Record record,
 
 			CALL_BL(BL_CreateBlock(file_desc_BF, &new_block_id, &new_block));
 
+			CALL_DB(DB_Init(new_block, 0));
+
 			/* We zero out the number of records in existing data block. */
 			CALL_DB(DB_Write_Entries(file_desc_AM, block, 0, &entries_flag));
 
