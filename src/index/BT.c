@@ -66,7 +66,7 @@ int BT_Subtree_Insert(int file_desc_AM, int subtree_root, Record record,
 	int fieldA_length;
 	int fieldB_length;
 	size_t n_entries;  // Maximum number of entries in a data block.
-	int next_block;
+	size_t next_block;
 	/********************************************************/
 
 	int next_subtree_root;  // The root of the next block when descending.
