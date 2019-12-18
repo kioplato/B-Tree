@@ -260,8 +260,8 @@ int AM_InsertEntry(int file_desc_AM, void* fieldA, void* fieldB)
 	 * That same memory will be used in each split to write the new key for the
 	 * upper layer to insert.
 	 */
-	BT_Subtree_Insert(file_desc_AM, index_root, record, &pointer1, &key,
-			&pointer2, &splitted);
+	CALL_BT(BT_Subtree_Insert(file_desc_AM, index_root, record, &pointer1, &key,
+			&pointer2, &splitted));
 	/*
 	 * The record got inserted.
 	 * However, the root could have splitted.
