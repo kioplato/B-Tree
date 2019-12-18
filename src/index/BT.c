@@ -47,6 +47,7 @@ int BT_Get_SubtreeRoot(int file_desc_AM, BF_Block* block, void* key, int* pointe
 	return AME_OK;
 }
 
+// XXX: Proceed with caution. Needs serious rework and cleanup.
 int BT_Subtree_Insert(int file_desc_AM, int subtree_root, Record record,
 		int* pointer1, void** key, int* pointer2, int* splitted)
 {
