@@ -354,6 +354,8 @@ int BT_Subtree_Insert(int file_desc_AM, int subtree_root, Record record,
 				*splitted = 1;  // Splitted remains true.
 
 				offseted_keys_ptrs += key_length;
+				CALL_IB(IB_Init(file_desc_AM, new_block, *(int*)offseted_keys_ptrs, offseted_keys_ptrs + pointer_length, *(int*)(offseted_keys_ptrs + pointer_length + key_length)));
+				offseted_keys_ptrs += pointer_length + key_length;
 				for (c_pointer = splitter; c_pointer < n_pointers + 1; ++c_pointer) {
 					CALL_IB(IB_Insert(file_desc_AM, new_block, *(int*)offseted_keys_ptrs, offseted_keys_ptrs + pointer_length, *(int*)(offseted_keys_ptrs + pointer_length + key_length), &write_flag));
 					offseted_keys_ptrs += pointer_length + key_length;
