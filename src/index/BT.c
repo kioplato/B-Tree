@@ -339,7 +339,7 @@ int BT_Subtree_Insert(int file_desc_AM, int subtree_root, Record record,
 				size_t c_pointer;
 				for (c_pointer = 0; c_pointer < splitter - 1; ++c_pointer) {
 					/* Probably it would be better to BF_Block_GetData() and memcpy from offseted_keys_ptrs to block's data the equivalent bytes. */
-					CALL_IB(IB_Insert(file_desc_AM, block, *(int*)offseted_keys_ptrs, offseted_keys_ptrs + pointer_length, *(int*)offseted_keys_ptrs + pointer_length + key_length, &write_flag));
+					CALL_IB(IB_Insert(file_desc_AM, block, *(int*)offseted_keys_ptrs, offseted_keys_ptrs + pointer_length, *(int*)(offseted_keys_ptrs + pointer_length + key_length), &write_flag));
 					offseted_keys_ptrs += pointer_length + key_length;
 					if (write_flag != 1) { fprintf(stderr, "Failed to write pointer-key-pointer to left index block.\n"); exit(1); }
 				}
@@ -355,7 +355,7 @@ int BT_Subtree_Insert(int file_desc_AM, int subtree_root, Record record,
 
 				offseted_keys_ptrs += key_length;
 				for (c_pointer = splitter; c_pointer < n_pointers + 1; ++c_pointer) {
-					CALL_IB(IB_Insert(file_desc_AM, new_block, *(int*)offseted_keys_ptrs, offseted_keys_ptrs + pointer_length, *(int*)offseted_keys_ptrs + pointer_length + key_length, &write_flag));
+					CALL_IB(IB_Insert(file_desc_AM, new_block, *(int*)offseted_keys_ptrs, offseted_keys_ptrs + pointer_length, *(int*)(offseted_keys_ptrs + pointer_length + key_length), &write_flag));
 					offseted_keys_ptrs += pointer_length + key_length;
 					if (write_flag != 1) { fprintf(stderr, "Failed to write pointer-key-pointer to right index block.\n"); exit(1); }
 				}
