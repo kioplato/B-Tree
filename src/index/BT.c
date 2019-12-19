@@ -330,7 +330,8 @@ int BT_Subtree_Insert(int file_desc_AM, int subtree_root, Record record,
 				 *
 				 * So we write pointer[0, splitter - 1] to the left block,
 				 * key[splitter - 1] is the key for the upper layer,
-				 * pointer[splitter, n_pointers + 1] to the right block.
+				 * pointer[splitter, n_pointers + 1 - 1] to the right block.
+				 * -1 because we start from 0.
 				 */
 				splitter = (n_pointers / 2) + 1;
 
@@ -356,7 +357,7 @@ int BT_Subtree_Insert(int file_desc_AM, int subtree_root, Record record,
 				offseted_keys_ptrs += key_length;
 				CALL_IB(IB_Init(file_desc_AM, new_block, *(int*)offseted_keys_ptrs, offseted_keys_ptrs + pointer_length, *(int*)(offseted_keys_ptrs + pointer_length + key_length)));
 				offseted_keys_ptrs += pointer_length + key_length;
-				for (c_pointer = splitter; c_pointer < n_pointers + 1; ++c_pointer) {
+				for (c_pointer = splitter + 1; c_pointer < n_pointers; ++c_pointer) {
 					CALL_IB(IB_Insert(file_desc_AM, new_block, *(int*)offseted_keys_ptrs, offseted_keys_ptrs + pointer_length, *(int*)(offseted_keys_ptrs + pointer_length + key_length), &write_flag));
 					offseted_keys_ptrs += pointer_length + key_length;
 					if (write_flag != 1) { fprintf(stderr, "Failed to write pointer-key-pointer to right index block.\n"); exit(1); }
