@@ -258,7 +258,7 @@ int IB_Write_Key(int file_desc_AM, BF_Block* block, int pointer1, void* key,
 	}
 
 	CALL_IB(IB_Get_CountPointers(block, &c_pointers));
-	c_keys = c_pointers - 1;
+	c_keys = (c_pointers != 0) ? c_pointers - 1 : 0;
 	if (c_key > c_keys) {
 		*flag = 0;
 		return AME_OK;
@@ -424,7 +424,8 @@ int IB_Insert(int file_desc_AM, BF_Block* block, int pointer1, void* key,
 		return AME_OK;
 	}
 
-	c_keys = c_pointers - 1;
+	/* Because when splitting index block c_pointers == 0. */
+	c_keys = (c_pointers != 0) ? c_pointers - 1 : 0;
 
 	CALL_FD(FD_Get_attrLength1(file_desc_AM, &key_length));
 
