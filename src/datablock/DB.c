@@ -12,6 +12,7 @@
 #include "../defn.h"
 #include "DB.h"
 #include "../record/RD.h"
+#include "../block/BL.h"
 
 int DB_Init(BF_Block* block, size_t next_block)
 {
@@ -519,6 +520,33 @@ int DB_Print(int file_desc_AM, BF_Block* block)
 
 	free(record.fieldA);
 	free(record.fieldB);
+
+	return AME_OK;
+}
+
+int DB_Print_Sublist(int file_desc_AM, BF_Block* block)
+{
+	int file_desc_BF;
+	size_t next_block;
+
+	if (block == NULL) {
+		fprintf(stderr, "DB_Print_Sublist: Provided block points to NULL.\n");
+		return AME_ERROR;
+	}
+
+	CALL_DB(DB_Print(file_desc_AM, block));
+
+	CALL_FD(FD_Get_FileDesc(file_desc_AM, &file_desc_BF));
+
+	CALL_DB(DB_Get_NextBlock(block, &next_block));
+	while (next_block != 0) {
+		CALL_BL(BL_LoadBlock(file_desc_BF, next_block, &block));
+		printf("Block id: %zu.\n", next_block);
+		CALL_DB(DB_Print(file_desc_AM, block));
+		CALL_DB(DB_Get_NextBlock(block, &next_block));
+		CALL_BF(BF_UnpinBlock(block));
+		BF_Block_Destroy(&block);
+	}
 
 	return AME_OK;
 }

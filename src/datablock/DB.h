@@ -156,4 +156,12 @@ int DB_Insert(int file_desc, BF_Block* block, Record record, int* flag);
  */
 int DB_Print(int file_desc_AM, BF_Block* block);
 
+/*
+ * Print the provided block and any data blocks by following the next block.
+ *
+ * Returns AME_OK on success.
+ * Returns AME_ERROR on failure, after printing error message.
+ */
+int DB_Print_Sublist(int file_desc_AM, BF_Block* block);
+
 #endif  // #ifndef DB_H
