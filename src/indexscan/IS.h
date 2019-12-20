@@ -41,11 +41,11 @@
  */
 
 struct scan_t {
-	int next;
-	int last_block;
-	int op;
-	int index_desc;
-	void* value;
+	int next;           // The next record we will return.
+	int last_block;     // The block in which `next` record exists.
+	int op;             // The range operation.
+	int index_desc_AM;  // The file descriptor for AM.
+	void* value;        // The operating value.
 };
 
 struct scan_t scanIndexArray[AM_MAX_SCAN_FILES];
@@ -69,7 +69,8 @@ int IS_OpenScan(int *scan_index);
  * Returns AME_OK if the scan can be opened.
  * Return AME_IS_MAX_FILES if the scanIndexArray[] is full.
  */
-int IS_Insert(int next, int last_block, int op, int index_desc, void* value, int scan_index);
+int IS_Insert(int next, int last_block, int op, int index_desc, void* value,
+		int* scan_index);
 
 
 /*
@@ -77,7 +78,7 @@ int IS_Insert(int next, int last_block, int op, int index_desc, void* value, int
 * Returns AME_IS_INVALID_INDEX if the scan doesnt exist.
 * Returns AME_OK if the scan exists.
 */
-int IS_Get_next(int index, size_t *next);
+int IS_Get_next(int index, int* next);
 
 
 /*
@@ -85,7 +86,7 @@ int IS_Get_next(int index, size_t *next);
  * Returns AME_IS_INVALID_INDEX if the scan doesnt exist.
  * Returns AME_OK if the scan exists.
  */
-int IS_Get_last_block(int index, char *last_block);
+int IS_Get_last_block(int index, int* last_block);
 
 
 /*
@@ -93,7 +94,7 @@ int IS_Get_last_block(int index, char *last_block);
  * Returns AME_IS_INVALID_INDEX if the scan doesnt exist.
  * Returns AME_OK if the scan exists.
  */
-int IS_Get_op(int index, char *op);
+int IS_Get_op(int index, int* op);
 
 
 /*
@@ -102,7 +103,7 @@ int IS_Get_op(int index, char *op);
  * Returns AME_IS_INVALID_INDEX if the scan doesnt exist.
  * Returns AME_OK if the scan exists.
  */
-int IS_Get_index_desc(int index, int *index_desc);
+int IS_Get_index_desc(int index, int* index_desc);
 
 
 /*
@@ -118,7 +119,7 @@ int IS_Get_value(int index, void** value);
  * Returns AME_IS_INVALID_INDEX if the scan doesnt exist.
  * Returns AME_OK if the scan exists.
  */
-int IS_Set_next(int index, size_t next);
+int IS_Set_next(int index, int next);
 
 
 /*
@@ -126,7 +127,7 @@ int IS_Set_next(int index, size_t next);
  * Returns AME_IS_INVALID_INDEX if the scan doesnt exist.
  * Returns AME_OK if the scan exists.
  */
-int IS_Set_last_block(int index, char last_block);
+int IS_Set_last_block(int index, int last_block);
 
 
 
