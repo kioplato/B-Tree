@@ -266,7 +266,7 @@ int IB_Write_Key(int file_desc_AM, BF_Block* block, int pointer1, void* key,
 
 	/* If we don't overwrite an existing key, increase block's number of pointers. */
 	if (c_key == c_keys) {
-		c_pointers++;
+		(c_pointers == 0) ? c_pointers += 2 : c_pointers++;
 		CALL_IB(IB_Write_CountPointers(file_desc_AM, block, c_pointers, &pointers_flag));
 		if (pointers_flag != 1) {
 			fprintf(stderr, "Failed to write new number of pointers in IB_Write_Key().\n");
