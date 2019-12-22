@@ -235,9 +235,6 @@ int AM_CloseIndex(int fileDesc)
 	return AME_OK;
 }
 
-
-
-
 int AM_InsertEntry(int file_desc_AM, void* fieldA, void* fieldB)
 {
 	size_t index_root;  // The root of index.

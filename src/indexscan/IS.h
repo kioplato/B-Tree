@@ -10,9 +10,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "BF.h"
-#include "filedesc/FD.h"
-#include "accessmethod/AM.h"
+#include "../BF.h"
+#include "../accessmethod/AM.h"
 
 #define AM_MAX_SCAN_FILES 20
 
@@ -24,15 +23,6 @@
 		return code;		\
 	}						\
 }
-
-
-/////////////////////////////////////////////
-
-#define AME_IS_MAX_FILES -15
-#define AME_IS_INVALID_INDEX -16
-#define AME_IS_OPEN -17
-
-///////////////////////////////////////////////
 
 /*
  * next: the record inside a data block to be examined.
@@ -128,7 +118,6 @@ int IS_Set_next(int index, int next);
  * Returns AME_OK if the scan exists.
  */
 int IS_Set_last_block(int index, int last_block);
-
 
 
 /*

@@ -6,8 +6,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../include/bf.h"
-#include "../include/AM.h"
+
+#include "../BF.h"
+#include "../accessmethod/AM.h"
 #include "IS.h"
 #include "../filedesc/FD.h"
 
