@@ -95,3 +95,23 @@ int MT_WriteData(BF_Block* metablock, size_t root_index_block)
 
 	return AME_OK;
 }
+
+int MT_Is_IndexFile(BF_Block* metablock, int* is_index)
+{
+	char desccode[] = DESCCODE;
+
+	char* metadata;
+	char* offseted_metadata;
+
+	if (metablock == NULL) return AME_ERROR;
+	if (is_index == NULL) return AME_ERROR;
+
+	metadata = NULL;
+	metadata = BF_Block_GetData(metablock);
+	if (metadata == NULL) return AME_ERROR;
+
+	offseted_metadata = metadata;
+	*is_index = !strncmp(offseted_metadata, desccode, 5);
+
+	return AME_OK;
+}
