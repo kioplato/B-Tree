@@ -116,8 +116,8 @@ int AM_DestroyIndex(char *fileName)
 	if (flag == 1) return AME_DELETE_OPEN_FILE;
 
 	if (remove(fileName) == -1) {
-		perror("remove() failed");
-		return AME_ERROR;
+		AM_errno = AME_FILE_NOT_EXISTS;
+		return AME_FILE_NOT_EXISTS;
 	}
 
 	return AME_OK;
