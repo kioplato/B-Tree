@@ -143,6 +143,8 @@ int AM_OpenIndex(char *fileName)
 	int attrLength1, attrLength2;
 	size_t root_index_block;
 
+	int is_index;
+
 	if (fileName == NULL) return AME_ERROR;
 
 	CALL_BF(BF_OpenFile(fileName, &file_desc_BF));
@@ -153,6 +155,14 @@ int AM_OpenIndex(char *fileName)
 	if (metablock == NULL) {
 		fprintf(stderr, "Metadata block failed to load in AM_OpenIndex().\n");
 		return AME_ERROR;
+	}
+
+	CALL_MT(MT_Is_IndexFile(metablock, &is_index));
+	if (is_index != 1) {
+		CALL_BF(BF_UnpinBlock(metablock));
+		BF_Block_Destroy(&metablock);
+		AM_errno = AME_INVALID_FILETYPE;
+		return AME_INVALID_FILETYPE;
 	}
 
 	CALL_MT(MT_GetData(metablock, &attrType1, &attrLength1, &attrType2,

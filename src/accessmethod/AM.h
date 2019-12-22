@@ -28,6 +28,7 @@ extern int AM_errno;
 #define AME_INVALID_LENGTH -18
 #define AME_INVALID_TYPE -19
 #define AME_FILE_NOT_EXISTS -20
+#define AME_INVALID_FILETYPE -21
 
 // Convert BF error codes to AME error codes.
 int convert(BF_ErrorCode code);
