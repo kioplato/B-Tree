@@ -37,6 +37,7 @@ int AM_Init() {
 	/* Initialize BF layer. */
 	CALL_BF(BF_Init(LRU));
 
+	AM_errno = AME_OK;
 	return AME_OK;
 }
 
@@ -54,7 +55,8 @@ int AM_CreateIndex(char *fileName, char attrType1, int attrLength1,
 	int metablock_id;  // The block id of metadata block.
 	BF_Block *metablock;  // The metadata block.
 
-	if (fileName == NULL)
+	if (fileName == NULL) {
+		AM_errno = AME_ERROR;
 		return AME_ERROR;
 	}
 
@@ -67,12 +69,16 @@ int AM_CreateIndex(char *fileName, char attrType1, int attrLength1,
 	if ((attrType1 == INTEGER && attrLength1 != sizeof(int)) ||
 			(attrType1 == FLOAT && attrLength1 != sizeof(float)) ||
 			(attrType2 == INTEGER && attrLength2 != sizeof(int)) ||
-			(attrType2 == FLOAT && attrLength2 != sizeof(float)))
+			(attrType2 == FLOAT && attrLength2 != sizeof(float))) {
+		AM_errno = AME_INVALID_LENGTH;
 		return AME_INVALID_LENGTH;
+	}
 
 	if ((attrType1 == STRING && (attrLength1 > 255 || attrLength1 < 1)) ||
-			(attrType2 == STRING && (attrLength2 > 255 || attrLength2 < 1)))
+			(attrType2 == STRING && (attrLength2 > 255 || attrLength2 < 1))) {
+		AM_errno = AME_INVALID_LENGTH;
 		return AME_INVALID_LENGTH;
+	}
 
 	/* Create and open the file. */
 	CALL_BF(BF_CreateFile(fileName));
@@ -82,6 +88,7 @@ int AM_CreateIndex(char *fileName, char attrType1, int attrLength1,
 	CALL_BL(BL_CreateBlock(file_desc_BF, &metablock_id, &metablock));
 	if (metablock == NULL) {
 		fprintf(stderr, "Failed to create metadata block in AM_CreateIndex().\n");
+		AM_errno = AME_ERROR;
 		return AME_ERROR;
 	}
 	CALL_MT(MT_Init(metablock, attrType1, attrLength1, attrType2, attrLength2));
@@ -93,6 +100,7 @@ int AM_CreateIndex(char *fileName, char attrType1, int attrLength1,
 
 	CALL_BF(BF_CloseFile(file_desc_BF));
 
+	AM_errno = AME_OK;
 	return AME_OK;
 }
 
@@ -108,18 +116,24 @@ int AM_DestroyIndex(char *fileName)
 {
 	int flag;  // Flag about if the fileName is open.
 
-	if (fileName == NULL)
+	if (fileName == NULL) {
+		AM_errno = AME_ERROR;
 		return AME_ERROR;
+	}
 
 	flag = -1;
 	CALL_FD(FD_IsOpen(fileName, &flag));
-	if (flag == 1) return AME_DELETE_OPEN_FILE;
+	if (flag == 1) {
+		AM_errno = AME_DELETE_OPEN_FILE;
+		return AME_DELETE_OPEN_FILE;
+	}
 
 	if (remove(fileName) == -1) {
 		AM_errno = AME_FILE_NOT_EXISTS;
 		return AME_FILE_NOT_EXISTS;
 	}
 
+	AM_errno = AME_OK;
 	return AME_OK;
 }
 
@@ -154,6 +168,7 @@ int AM_OpenIndex(char *fileName)
 	CALL_BL(BL_LoadBlock(file_desc_BF, 0, &metablock));
 	if (metablock == NULL) {
 		fprintf(stderr, "Metadata block failed to load in AM_OpenIndex().\n");
+		AM_errno = AME_ERROR;
 		return AME_ERROR;
 	}
 
@@ -194,7 +209,10 @@ int AM_CloseIndex(int fileDesc)
 
 	// Check if this file open has any open scans.
 	CALL_IS(IS_IsOpen(fileDesc, &flag));
-	if (flag == 1) return AME_FILE_CLOSE_OPEN_SCAN;
+	if (flag == 1) {
+		AM_errno = AME_FILE_CLOSE_OPEN_SCAN;
+		return AME_FILE_CLOSE_OPEN_SCAN;
+	}
 
 	// Try to delete the FD. If successful proceed.
 	CALL_FD(FD_Delete(fileDesc));
@@ -213,6 +231,7 @@ int AM_CloseIndex(int fileDesc)
 	// Close the file in BF layer.
 	CALL_BF(BF_CloseFile(BF_index));
 
+	AM_errno = AME_OK;
 	return AME_OK;
 }
 
@@ -234,8 +253,8 @@ int AM_InsertEntry(int file_desc_AM, void* fieldA, void* fieldB)
 
 	Record record;  // The record to insert.
 
-	if (fieldA == NULL) return AME_ERROR;
-	if (fieldB == NULL) return AME_ERROR;
+	if (fieldA == NULL) { AM_errno = AME_ERROR; return AME_ERROR; }
+	if (fieldB == NULL) { AM_errno = AME_ERROR; return AME_ERROR; }
 
 	/*
 	 * This function makes the record's members point to the same memory as
@@ -257,11 +276,12 @@ int AM_InsertEntry(int file_desc_AM, void* fieldA, void* fieldB)
 		CALL_BL(BL_CreateBlock(file_desc_BF, &first_block_id, &first_block));
 		CALL_DB(DB_Init(first_block, 0));
 		CALL_DB(DB_Insert(file_desc_AM, first_block, record, &insert_status));
-		if (insert_status != 1) return AME_ERROR;
+		if (insert_status != 1) { AM_errno = AME_ERROR; return AME_ERROR; }
 		CALL_FD(FD_Set_IndexRoot(file_desc_AM, first_block_id));
 		BF_Block_SetDirty(first_block);
 		CALL_BF(BF_UnpinBlock(first_block));
 		BF_Block_Destroy(&first_block);
+		AM_errno = AME_OK;
 		return AME_OK;
 	}
 
@@ -297,6 +317,7 @@ int AM_InsertEntry(int file_desc_AM, void* fieldA, void* fieldB)
 		CALL_FD(FD_Set_IndexRoot(file_desc_AM, new_root_id));
 	}
 
+	AM_errno = AME_OK;
 	return AME_OK;
 }
 
