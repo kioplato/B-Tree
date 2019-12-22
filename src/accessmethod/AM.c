@@ -500,12 +500,9 @@ void* AM_FindNextEntry(int scanDesc)
 
 int AM_CloseIndexScan(int scanDesc)
 {
-	printf("scanDesc: %d.\n", scanDesc);
+	CALL_IS(IS_Close(scanDesc));
 
-	printf("The AM_CloseIndexScan() isn't yet implemented.\n");
-
-	exit(1);
-
+	AM_errno = AME_OK;
 	return AME_OK;
 }
 
