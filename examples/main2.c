@@ -107,6 +107,7 @@ int main() {
 	count = 0;
 	while ((cvalue = AM_FindNextEntry(scan1)) != NULL) {
 		printf("Found %s\n", cvalue);
+		free(cvalue);
 		count++;
 	}
 	printf("%d records found with age %d\n", count, eage);
@@ -151,6 +152,7 @@ int main() {
 	 ********************************************************************************/
 	while ((cvalue = AM_FindNextEntry(scan1)) != NULL) {
 		printf("'%s' \n", cvalue);
+		free(cvalue);
 	}
 
 	/********************************************************************************
@@ -195,6 +197,7 @@ int main() {
 	 ********************************************************************************/
 	while ((cvalue = AM_FindNextEntry(scan1)) != NULL) {
 		printf("'%s' \n", cvalue);
+		free(cvalue);
 	}
 
 	/********************************************************************************
@@ -389,6 +392,7 @@ int main() {
 		printf("empids:  ");
 		while ((ivalue = AM_FindNextEntry(scan2)) != NULL) {
 			printf("%d \n", *ivalue);
+			free(ivalue);
 		}
 		printf("\n");
 
@@ -406,6 +410,8 @@ int main() {
 					scan2);
 			AM_PrintError(errStr);
 		}
+
+		free(fvalue);
 	}
 
 	if (AM_errno != AME_EOF) {
