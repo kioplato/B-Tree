@@ -550,7 +550,6 @@ void AM_PrintError(char *errString)
 	//	printf("this should not happen.\n");
 }
 
-// NOTE: Probably is incomplete.
 void AM_Close()
 {
 	BF_Close();
