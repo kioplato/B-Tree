@@ -345,57 +345,157 @@ int AM_OpenIndexScan(int file_desc_AM, int op, void* value)
 	AM_errno = AME_OK;
 	return scan_index;
 }
-/*
-	size_t index_root;
-	CALL_FD(FD_Get_IndexRoot(indexDesc, &index_root));
-	//αν ειχαμε συνεννοηθει σωστα, τωρα θα εχω στο index_root θα εχω είτε το root, δηλαδη το id ενος index block
-	//είτε το id ενος data block, δηλαδη του πρώτου και μοναδικου data block.
-
-	//check the type of block
-	BF_Block* root_block=NULL;
-	BF_Block_Init(&root_block);
-	if (root_block==NULL) return AME_ERROR;
-
-	CALL_FD(FD_Get_FileDesc(indexDesc, &filedesc));
-
-
-	CALL_BF(BF_GetBlock( filedesc, index_root, root_block)
-	int flag;
-	CALL_DB(DB_Is_DataBlock(block, &flag));
-	if (flag==1)
-		int scan_index;
-		CALL_IS(IS_Insert(next=1, last_block=index_root, op, indexDesc, void* value, &scan_index))
-		return scan_index;
-	else //it was index block so we must go down the tree depending on the op
-		if (op==EQUAL) //για ισοτητα θελω τον αριστερο pointer ενος key για το οποιο value<key.
-			while (flag==0)
-				int i=0;
-				while (1)
-					int pointer, key
-					BT_Get_Pair(i, &pointer, &key)
-
-
-
-
-
-
-
-
-	IS_Insert(int next=1, int last_block, int op, int indexDesc, void* value, *scan_index)
-
-	return AME_OK;
-}
-*/
 
 void* AM_FindNextEntry(int scanDesc)
 {
-	printf("scanDesc: %d.\n", scanDesc);
+	BF_Block* block;  // The opened block we are searching in.
 
-	printf("The AM_FindNextEntry() isn't yet implemented.\n");
-	
-	exit(1);
+	int key_length;  // The length of key in bytes.
+	int val_length;  // The length of value in bytes.
 
-	return NULL;
+	int last_block;    // Block to search in for records.
+	int next;          // The record offset in the block.
+	int file_desc_AM;  // The file descriptor in AM.
+	int op;            // The operation relative to value for range query.
+	void* value = NULL;  // The cached value for the range query.
+
+	Record record;  // Record temp for getting records from data blocks.
+	size_t c_entries;  // The last_block's number of entries stored.
+	int next_block;    // The block's next block.
+	size_t c_entry;    // The index of the current entry in block.
+
+	int get_flag;  // The get status of the record from data block.
+	int cmp_flag;  // The result from comparing value to fetched key from block.
+
+	void* rval = NULL;  // The return value. Value field to return.
+
+	int last_entry;  // True if the result is the last entry of the block.
+
+	/*
+	 * In some cases the current block won't contain a result for a range query.
+	 * Such cases are GREATER_THAN with a value that is the last in the block,
+	 * GREATER_THAN or GREATER_THAN_OR_EQUAL with a value that does not exist
+	 * but it's bigger than existing keys. These cases happen the first time
+	 * AM_FindNextEntry() is executed.
+	 *
+	 * There is the exception of NOT_EQUAL with a value that is the last record
+	 * in the block. In this case we need to read the next block and happens
+	 * after the first execution of AM_FindNextEntry().
+	 *
+	 * TODO: Probably recursion would be cleaner than for looping.
+	 * It would work like this: while no result found update next and/or
+	 * last_block and repeat for the next record. Probably it would be tail
+	 * recursion as well.
+	 */
+	int requires_next_block;  // True if result not found and needs next block to find one.
+
+	int rv;  // Return value of functions.
+
+	/*
+	 * TODO: Functions should set the AM_errno before they return.
+	 */
+	if ((rv = IS_Get_last_block(scanDesc, &last_block)) != AME_OK) { AM_errno = rv; return NULL; }
+	if ((rv = IS_Get_next(scanDesc, &next)) != AME_OK) { AM_errno = rv; return NULL; }
+	if ((rv = IS_Get_index_desc(scanDesc, &file_desc_AM)) != AME_OK) { AM_errno = rv; return NULL; }
+	if ((rv = IS_Get_op(scanDesc, &op)) != AME_OK) { AM_errno = rv; return NULL; }
+	if ((rv = IS_Get_value(scanDesc, &value)) != AME_OK) { AM_errno = rv; return NULL; }
+
+	if (last_block == 0) {
+		AM_errno = AME_EOF;
+		return rval;
+	}
+
+	if ((rv = FD_Get_attrLength1(file_desc_AM, &key_length)) != AME_OK) { AM_errno = rv; return NULL; }
+	if ((rv = FD_Get_attrLength2(file_desc_AM, &val_length)) != AME_OK) { AM_errno = rv; return NULL; }
+	record.fieldA = malloc(key_length);
+	record.fieldB = malloc(val_length);
+
+	if ((rv = BL_LoadBlock(file_desc_AM, last_block, &block)) != AME_OK) { AM_errno = rv; return NULL; }
+
+	if ((rv = DB_Get_Entries(block, &c_entries)) != AME_OK) { AM_errno = rv; return NULL; }
+
+	/*
+	 * We search for the first key that satisfies the range query.
+	 * We do this because this for two reasons:
+	 * 1. It may be the first AM_FindNextEntry() after AM_OpenIndexScan().
+	 *    This means that we need to search the block to get to the first record
+	 *    that satisfies the range query. To get to the "frontier" let's say.
+	 * 2. It may be a NOT EQUAL query. This means that we need to search in the
+	 *    whole block since the some records may have `value` keys.
+	 */
+
+	for (c_entry = next; c_entry < c_entries; ++c_entry) {
+		if ((rv = DB_Get_Record(file_desc_AM, block, &record, c_entry, &get_flag)) != AME_OK) { AM_errno = rv; return NULL; }
+		if (get_flag != 1) { AM_errno = AME_ERROR; return NULL; }
+		if ((rv = RD_Key_cmp(file_desc_AM, value, record.fieldA, &cmp_flag)) != AME_OK) { AM_errno = rv; return NULL; }
+		if (op == EQUAL && cmp_flag == 0) {
+			rval = record.fieldB;
+			break;
+		}
+		else if (op == NOT_EQUAL && cmp_flag != 0) {
+			rval = record.fieldB;
+			break;
+		}
+		else if (op == LESS_THAN && cmp_flag == 1) {
+			rval = record.fieldB;
+			break;
+		}
+		else if (op == GREATER_THAN && cmp_flag == -1) {
+			rval = record.fieldB;
+			break;
+		}
+		else if (op == LESS_THAN_OR_EQUAL && (cmp_flag == 0 || cmp_flag == 1)) {
+			rval = record.fieldB;
+			break;
+		}
+		else if (op == GREATER_THAN_OR_EQUAL && (cmp_flag == 0 || cmp_flag == -1)) {
+			rval = record.fieldB;
+			break;
+		}
+	}
+
+	free(record.fieldA);
+	if (rval == NULL) free(record.fieldB);
+
+	/*
+	 * At this point, either we found a matching record or the block ran out
+	 * out records to search.
+	 *
+	 * If the latter is happening, we ran out of records in current block while
+	 * no record matches the range query, we need to move to the next data
+	 * block in the chain only in the case of op == NOT_EQUAL. Is such case we
+	 * do a recursive call to get the first record from the next block.
+	 *
+	 * If the former is happening, if this was the last record of the block
+	 * then move to the next record. The last record happens when
+	 * c_entry == c_entries - 1 because of break.
+	 */
+
+	last_entry = c_entry == c_entries - 1;
+	requires_next_block = op == NOT_EQUAL && rval == NULL;
+	requires_next_block |= op == GREATER_THAN && rval == NULL;
+	requires_next_block |= op == GREATER_THAN_OR_EQUAL && rval == NULL;
+
+	if (last_entry || requires_next_block) {
+		if ((rv = DB_Get_NextBlock(block, (size_t*)&next_block)) != AME_OK) { AM_errno = rv; return NULL; }
+		if ((rv = IS_Set_last_block(scanDesc, next_block)) != AME_OK) { AM_errno = rv; return NULL; }
+		if ((rv = IS_Set_next(scanDesc, 0)) != AME_OK) { AM_errno = rv; return NULL; }
+	} else {
+		if ((rv = IS_Set_next(scanDesc, c_entry + 1)) != AME_OK) { AM_errno = rv; return NULL; }
+	}
+
+	if ((rv = BF_UnpinBlock(block)) != BF_OK) {AM_errno = convert(rv); return NULL; }
+	BF_Block_Destroy(&block);
+
+	/*
+	 * Just get the first entry of the next block.
+	 */
+	if (requires_next_block)
+		return AM_FindNextEntry(scanDesc);
+
+	if (rval == NULL) AM_errno = AME_EOF;
+	else AM_errno = AME_OK;
+	return rval;
 }
 
 int AM_CloseIndexScan(int scanDesc)
