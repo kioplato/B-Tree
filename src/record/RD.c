@@ -73,7 +73,6 @@ int RD_Split_Records(int file_desc_AM, Record records[], size_t n_records, size_
 		if (cmp_flag == 1) break;
 	}
 
-	printf("Left c_splitter: %ld.\n", c_splitter);
 	*splitter = c_splitter;  // Store distance from left edge as temporary maximum.
 
 	/* Work towards the right side. */
@@ -81,8 +80,6 @@ int RD_Split_Records(int file_desc_AM, Record records[], size_t n_records, size_
 		CALL_RD(RD_Key_cmp(file_desc_AM, records[c_splitter].fieldA, records[c_splitter + 1].fieldA, &cmp_flag));
 		if (cmp_flag == -1) { break; }
 	}
-
-	printf("Right c_splitter: %ld.\n", c_splitter);
 
 	/* Compare the distances between left edge split and right edge split. */
 	if (*splitter < (n_records - 1) - c_splitter) *splitter = c_splitter + 1;
