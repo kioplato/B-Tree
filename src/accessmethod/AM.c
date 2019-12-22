@@ -56,6 +56,13 @@ int AM_CreateIndex(char *fileName, char attrType1, int attrLength1,
 
 	if (fileName == NULL)
 		return AME_ERROR;
+	}
+
+	if ((attrType1 != INTEGER && attrType1 != FLOAT && attrType1 != STRING) ||
+			(attrType2 != INTEGER && attrType2 != FLOAT && attrType2 != STRING)) {
+		AM_errno = AME_INVALID_TYPE;
+		return AME_INVALID_TYPE;
+	}
 
 	if ((attrType1 == INTEGER && attrLength1 != sizeof(int)) ||
 			(attrType1 == FLOAT && attrLength1 != sizeof(float)) ||
