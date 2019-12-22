@@ -300,25 +300,50 @@ int AM_InsertEntry(int file_desc_AM, void* fieldA, void* fieldB)
 	return AME_OK;
 }
 
-int AM_OpenIndexScan(int indexDesc, int op, void *value)
+int AM_OpenIndexScan(int file_desc_AM, int op, void* value)
 {
-	printf("indexDesc: %d.\n", indexDesc);
-	printf("op: %d.\n", op);
-	char key_type;
-	CALL_FD(FD_Get_attrType1(indexDesc, &key_type));
-	printf("Key: ");
-	if (key_type == 'i')
-		printf("%d.\n", *(int*)value);
-	else if (key_type == 'f')
-		printf("%f.\n", *(float*)value);
-	else if (key_type == 'c')
-		printf("%s.\n", (char*)value);
+	/*
+	 * Used in the case where we need to traverse the B+-Tree in order to get
+	 * to the required data block specified by the `value`.
+	 * ex.: when op == EQUAL.
+	 *
+	 * It's the B+-Tree's root.
+	 */
+	int subtree_root;
 
-	printf("The AM_OpenIndexScan() isn't yet implemented.\n");
+	/*
+	 * Block id of the first block that contains records according to op-value.
+	 * In case where we need to start from the leftmost block, for example when
+	 * op == LESS THAN, we already know the block id and we don't need to search
+	 * for it. This happens because when we split a data block, the half smaller
+	 * records are placed in the already existing block. As such, since data
+	 * block with block id 1 is the first block and when we split a data block
+	 * the existing data block gets the half smallest records then the block
+	 * with id 1 is the leftmost.
+	 */
+	int block_id;
 
-	exit(1);
+	int scan_index;  // The index of the cached data for this new scan.
 
-	return AME_OK;
+	if (op == EQUAL || op == GREATER_THAN || op == GREATER_THAN_OR_EQUAL) {
+		CALL_FD(FD_Get_IndexRoot(file_desc_AM, (size_t*)&subtree_root));
+		CALL_BT(BT_Get_SubtreeLeaf(file_desc_AM, subtree_root, value, &block_id));
+	} else {
+		block_id = 1;
+	}
+
+	/*
+	 * Inserts the required data for future reference by AM_FindNextEntry()
+	 * in order to get the next record which satisties the range query.
+	 *
+	 * next is 0 because AM_FindNextEntry() will search for the first record
+	 * in the block_id which satisfies the range query. We don't care to search
+	 * for it at this stage.
+	 */
+	CALL_IS(IS_Insert(0, block_id, op, file_desc_AM, value, &scan_index));
+
+	AM_errno = AME_OK;
+	return scan_index;
 }
 /*
 	size_t index_root;
