@@ -381,3 +381,38 @@ int BT_Subtree_Insert(int file_desc_AM, int subtree_root, Record record,
 
 	return AME_ERROR;
 }
+
+int BT_Get_SubtreeLeaf(int file_desc_AM, int subtree_root, void* key,
+		int* block_id)
+{
+	BF_Block* block;
+
+	int is_datablock;
+
+	int file_desc_BF;
+
+	int next_subtree_root;
+
+	if (key == NULL) return AME_ERROR;
+	if (block_id == NULL) return AME_ERROR;
+
+	CALL_FD(FD_Get_FileDesc(file_desc_AM, &file_desc_BF));
+
+	CALL_BL(BL_LoadBlock(file_desc_BF, subtree_root, &block));
+
+	CALL_DB(DB_Is_DataBlock(block, &is_datablock));
+
+	if (is_datablock == 1) {
+		*block_id = subtree_root;
+		CALL_BF(BF_UnpinBlock(block));
+		BF_Block_Destroy(&block);
+	}
+	else if (is_datablock == 0) {
+		CALL_BT(BT_Get_SubtreeRoot(file_desc_AM, block, key, &next_subtree_root));
+		CALL_BF(BF_UnpinBlock(block));
+		BF_Block_Destroy(&block);
+		CALL_BT(BT_Get_SubtreeLeaf(file_desc_AM, next_subtree_root, key, block_id));
+	}
+
+	return AME_OK;
+}

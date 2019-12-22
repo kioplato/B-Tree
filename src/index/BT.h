@@ -39,4 +39,15 @@ int BT_Get_SubtreeRoot(int file_desc_AM, BF_Block* block, void* key, int* pointe
 int BT_Subtree_Insert(int file_desc_AM, int subtree_root, Record record,
 		int* pointer1, void** key, int* pointer2, int* splitted);
 
+/*
+ * Searches the B+-Tree and returns the data block id in which the key should
+ * exist. It may not exist but that's where it would be if it exists.
+ * Writes the data block id at block_id.
+ *
+ * Returns AME_OK on success.
+ * Returns AME_ERROR on failure.
+ */
+int BT_Get_SubtreeLeaf(int file_desc_AM, int subtree_root, void* key,
+		int* block_id);
+
 #endif  // #ifndef BT_H
