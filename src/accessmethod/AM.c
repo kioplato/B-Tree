@@ -508,11 +508,46 @@ int AM_CloseIndexScan(int scanDesc)
 
 void AM_PrintError(char *errString)
 {
-	printf("errString: %s.\n", errString);
+	printf("%s: ", errString);
+	if (AM_errno == AME_OK)
+		printf("successful execution.\n");
+	else if (AM_errno == AME_BF_MAX_FILES || AM_errno == AME_MAX_FILES)
+		printf("maximum opens reached.\n");
+	else if (AM_errno == AME_INVALID_FD || AM_errno == AME_FD_INVALID_INDEX)
+		printf("invalid file descriptor.\n");
+	else if (AM_errno == AME_FILE_EXISTS)
+		printf("file already exists.\n");
+	else if (AM_errno == AME_BF_ERROR)
+		printf("system fail.\n");
+	else if (AM_errno == AME_ERROR)
+		printf("NULL memory or failed memory allocation.\n");
+	else if (AM_errno == AME_EOF)
+		printf("no entries that match range query.\n");
+	else if (AM_errno == AME_DELETE_OPEN_FILE)
+		printf("deleting an open file.\n");
+	else if (AM_errno == AME_FILE_CLOSE_OPEN_SCAN)
+		printf("trying to close a file with opened scan(s).\n");
+	else if (AM_errno == AME_IS_MAX_FILES)
+		printf("maximum open scans reached.\n");
+	else if (AM_errno == AME_IS_INVALID_INDEX)
+		printf("invalid scan index.\n");
+	else if (AM_errno == AME_INVALID_LENGTH)
+		printf("invalid field length(s).\n");
+	else if (AM_errno == AME_INVALID_TYPE)
+		printf("invalid field type(s).\n");
+	else if (AM_errno == AME_FILE_NOT_EXISTS)
+		printf("deleting non existent file path.\n");
+	else if (AM_errno == AME_INVALID_FILETYPE)
+		printf("opening unknown file type.\n");
 
-	printf("The AM_PrintError() isn't yet implemented.\n");
-
-	exit(1);
+	//else if (AM_errno == AME_INVALID_BLOCK_ID)
+	//	printf("this should not happen.\n");
+	//else if (AM_errno == AME_FULL_MEMORY)
+	//	printf("this should not happen.\n");
+	//else if (AM_errno == AME_BF_ACTIVE)
+	//	printf("this should not happen.\n");
+	//else if (AM_errno == AME_BF_INVALID_FD)
+	//	printf("this should not happen.\n");
 }
 
 // NOTE: Probably is incomplete.
