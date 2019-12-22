@@ -184,9 +184,11 @@ int FD_IsOpen(char fileName[], int* flag)
 		return AME_ERROR;
 
 	for (size_t i = 0; i < AM_MAX_OPEN_FILES; ++i) {
-		if (strcmp(filedescs[i].filename, fileName) == 0) {
-			*flag = 1;
-			return AME_OK;
+		if (filedescs[i].filedesc != -1) {
+			if (strcmp(filedescs[i].filename, fileName) == 0) {
+				*flag = 1;
+				return AME_OK;
+			}
 		}
 	}
 
