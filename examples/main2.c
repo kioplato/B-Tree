@@ -63,6 +63,8 @@ int main() {
 		AM_PrintError(errStr);
 	}
 
+	AM_CloseIndex(eNentry);
+
 	if ((eAentry = AM_OpenIndex(empAge)) < 0) {
 		sprintf(errStr, "Error in AM_OpenIndex called on %s \n", empAge);
 		AM_PrintError(errStr);
@@ -73,10 +75,14 @@ int main() {
 		AM_PrintError(errStr);
 	}
 
+	AM_CloseIndex(eSentry);
+
 	if ((eDentry = AM_OpenIndex(empDname)) < 0) {
 		sprintf(errStr, "Error in AM_OpenIndex called on %s \n", empDname);
 		AM_PrintError(errStr);
 	}
+
+	AM_CloseIndex(eDentry);
 
 	strcpy(ename, "LYRISTHS EYSTAQIOS");
 	eage = 20;
