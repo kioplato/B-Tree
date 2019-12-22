@@ -13,6 +13,7 @@
 #include "../src/filedesc/FD.h"
 #include "../src/datablock/DB.h"
 #include "../src/defn.h"
+#include "../src/index/BT.h"
 
 int main(void)
 {
@@ -157,7 +158,42 @@ int main(void)
 	CALL_BF(BF_UnpinBlock(block));
 	BF_Block_Destroy(&block);
 
-	/*
+	int block_id;
+	key[0] = 'B';
+	key[1] = 'W';
+	key[2] = 'P';
+	key[3] = '\0';
+	CALL_BT(BT_Get_SubtreeLeaf(file_desc_AM, index_root_id, key, &block_id));
+	printf("%s exists in %d block.\n", key, block_id);
+
+	key[0] = 'A';
+	key[1] = 'A';
+	key[2] = 'A';
+	key[3] = '\0';
+	CALL_BT(BT_Get_SubtreeLeaf(file_desc_AM, index_root_id, key, &block_id));
+	printf("%s exists in %d block.\n", key, block_id);
+
+	key[0] = 'S';
+	key[1] = 'E';
+	key[2] = 'Z';
+	key[3] = '\0';
+	CALL_BT(BT_Get_SubtreeLeaf(file_desc_AM, index_root_id, key, &block_id));
+	printf("%s exists in %d block.\n", key, block_id);
+
+	key[0] = 'L';
+	key[1] = 'B';
+	key[2] = 'C';
+	key[3] = '\0';
+	CALL_BT(BT_Get_SubtreeLeaf(file_desc_AM, index_root_id, key, &block_id));
+	printf("%s exists in %d block.\n", key, block_id);
+
+	key[0] = 'L';
+	key[1] = 'B';
+	key[2] = 'D';
+	key[3] = '\0';
+	CALL_BT(BT_Get_SubtreeLeaf(file_desc_AM, index_root_id, key, &block_id));
+	printf("%s exists in %d block.\n", key, block_id);
+
 	CALL_BL(BL_LoadBlock(file_desc_AM, 1, &block));
 	printf("Printing the data block 1.\n");
 	CALL_DB(DB_Print(file_desc_AM, block));
@@ -181,7 +217,6 @@ int main(void)
 	CALL_IB(IB_Print(file_desc_AM, block));
 	CALL_BF(BF_UnpinBlock(block));
 	BF_Block_Destroy(&block);
-	*/
 
 	int file_desc_BF;
 	CALL_FD(FD_Get_FileDesc(file_desc_AM, &file_desc_BF));
