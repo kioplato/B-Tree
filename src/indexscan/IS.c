@@ -21,7 +21,7 @@ int IS_Insert(int next, int last_block, int op, int index_desc_AM, void* value,
 		int* scan_index)
 {
 	int key_length;
-	CALL_FD(FD_Get_attrLength1(file_desc_AM, &key_length));
+	CALL_FD(FD_Get_attrLength1(index_desc_AM, &key_length));
 
 	for (size_t i = 0; i < AM_MAX_SCAN_FILES; ++i) {
 		if (scanIndexArray[i].index_desc_AM == -1) {
